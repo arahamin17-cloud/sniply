@@ -1,15 +1,43 @@
 'use client'
 
 import { FormEvent, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { ArrowLeftIcon, ArrowRightIcon, CheckCircleFillIcon, LinkIcon, LockIcon, RocketIcon } from '@primer/octicons-react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 
 export default function SigninPage() {
+  const router = useRouter()
   const [submitted, setSubmitted] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setErrorMessage('')
+    setIsLoading(true)
+    const formData = new FormData(event.currentTarget)
+    const email = String(formData.get('email') ?? '')
+    const password = String(formData.get('password') ?? '')
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    setIsLoading(false)
+
+    if (error) {
+      const message = error.message.toLowerCase().includes('email not confirmed')
+        ? 'Please confirm your email before signing in.'
+        : error.status === 429
+          ? 'Too many attempts. Please try again shortly.'
+          : error.message.toLowerCase().includes('invalid login credentials')
+            ? 'Invalid email or password.'
+            : 'We could not sign you in. Please try again.'
+      setErrorMessage(message)
+      return
+    }
+
     setSubmitted(true)
+    router.refresh()
+    router.push('/')
   }
 
   return (
@@ -35,11 +63,12 @@ export default function SigninPage() {
           ) : (
             <>
               <div className="auth-card-heading"><span className="auth-card-icon"><LockIcon size={17} /></span><div><h2>Sign in to your account</h2><p>Keep your links moving forward.</p></div></div>
-              <form className="signup-form" onSubmit={handleSubmit}>
+              <form className="signup-form" onSubmit={handleSubmit} aria-busy={isLoading}>
+                {errorMessage ? <p className="form-error" role="alert">{errorMessage}</p> : null}
                 <label>Work email<input type="email" name="email" placeholder="alex@company.com" required /></label>
                 <label>Password<input type="password" name="password" placeholder="Enter your password" required /></label>
                 <div className="form-options"><label className="checkbox-row"><input type="checkbox" /><span>Remember me</span></label><Link href="/forgot-password">Forgot password?</Link></div>
-                <button className="primary-button" type="submit">Sign in <ArrowRightIcon size={16} /></button>
+                <button className="primary-button" type="submit" disabled={isLoading}>{isLoading ? 'Signing in…' : 'Sign in'} <ArrowRightIcon size={16} /></button>
               </form>
               <div className="auth-divider"><span>New to eslotmain.xyz?</span></div>
               <Link className="outline-button outline-link" href="/signup">Create a free account</Link>

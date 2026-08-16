@@ -1,15 +1,49 @@
 'use client'
 
 import { FormEvent, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import { ArrowLeftIcon, ArrowRightIcon, CheckCircleFillIcon, CheckIcon, LinkIcon, LockIcon, RocketIcon } from '@primer/octicons-react'
 import Link from 'next/link'
 
 export default function SignupPage() {
   const [submitted, setSubmitted] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setErrorMessage('')
+    setIsLoading(true)
+    const formData = new FormData(event.currentTarget)
+    const email = String(formData.get('email') ?? '')
+    const password = String(formData.get('password') ?? '')
+    const name = String(formData.get('name') ?? '')
+    const supabase = createClient()
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback`,
+        data: { full_name: name },
+      },
+    })
+    setIsLoading(false)
+
+    if (error) {
+      const lowerMessage = error.message.toLowerCase()
+      const message = error.status === 429
+        ? 'Too many attempts. Please try again shortly.'
+        : lowerMessage.includes('password')
+          ? error.message
+          : lowerMessage.includes('already registered') || lowerMessage.includes('already been registered')
+            ? 'This email may already be registered. Try signing in instead.'
+            : 'We could not create your account. Please try again.'
+      setErrorMessage(message)
+      return
+    }
+
     setSubmitted(true)
+    if (data.session) window.location.assign('/')
   }
 
   return (
@@ -40,12 +74,13 @@ export default function SignupPage() {
           ) : (
             <>
               <div className="auth-card-heading"><span className="auth-card-icon"><LockIcon size={17} /></span><div><h2>Create your account</h2><p>Start free. No credit card required.</p></div></div>
-              <form className="signup-form" onSubmit={handleSubmit}>
+              <form className="signup-form" onSubmit={handleSubmit} aria-busy={isLoading}>
+                {errorMessage ? <p className="form-error" role="alert">{errorMessage}</p> : null}
                 <label>Full name<input type="text" name="name" placeholder="Alex Morgan" required /></label>
                 <label>Work email<input type="email" name="email" placeholder="alex@company.com" required /></label>
                 <label>Password<input type="password" name="password" placeholder="At least 8 characters" minLength={8} required /></label>
                 <label className="checkbox-row"><input type="checkbox" required /><span>I agree to the <a href="#terms">Terms of Service</a> and <a href="#privacy">Privacy Policy</a>.</span></label>
-                <button className="primary-button" type="submit">Create free account <ArrowRightIcon size={16} /></button>
+                <button className="primary-button" type="submit" disabled={isLoading}>{isLoading ? 'Creating account…' : 'Create free account'} <ArrowRightIcon size={16} /></button>
               </form>
               <div className="auth-divider"><span>Already have an account?</span></div>
               <Link className="outline-button outline-link" href="/signin">Sign in to your account</Link>
