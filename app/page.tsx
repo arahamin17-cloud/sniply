@@ -44,10 +44,11 @@ export default function Page() {
           <a href="#features">Features</a>
           <a href="#analytics">Analytics</a>
           <a href="#blog">Blog</a>
+          <a href="/bulk">Bulk submit</a>
           <a className="nav-signin" href="/signin">Sign in</a>
           <a className="nav-cta" href="/signup">Get started <ArrowRightIcon size={15} /></a>
         </div>
-        <div className="mobile-actions"><a className="mobile-signin" href="/signin">Sign in</a><a className="mobile-cta" href="/signup">Start free</a></div>
+        <div className="mobile-actions"><a className="mobile-signin" href="/signin">Sign in</a><a className="mobile-bulk" href="/bulk">Bulk</a><a className="mobile-cta" href="/signup">Start free</a></div>
       </nav>
 
       <section id="top" className="hero page-width">
