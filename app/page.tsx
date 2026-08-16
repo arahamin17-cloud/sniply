@@ -117,11 +117,18 @@ export default function Page() {
         </Stack>
       </section>
 
-      <section id="features" style={{ maxWidth: 1180, margin: '0 auto', padding: '32px 24px 96px' }}>
-        <Stack direction="horizontal" gap="normal">
-          <Feature icon={ZapIcon} eyebrow="EFFORTLESS" title="One link, everywhere" text="Create clean, shareable links in seconds. Make every URL look like it belongs to your brand." />
-          <Feature icon={GraphIcon} eyebrow="INSIGHTFUL" title="Know what works" text="See clicks, locations, devices, and referrers at a glance. Make decisions with real data." />
-          <Feature icon={LinkIcon} eyebrow="ON BRAND" title="Built to be remembered" text="Use custom slugs and branded domains to turn a link into a recognizable part of your identity." />
+      <section id="features" aria-labelledby="features-heading" style={{ maxWidth: 1180, margin: '0 auto', padding: '32px 24px 96px', scrollMarginTop: 24 }}>
+        <Stack direction="vertical" gap="spacious">
+          <Stack direction="vertical" gap="normal" style={{ maxWidth: 620 }}>
+            <Label variant="accent">MADE FOR MOMENTS THAT MATTER</Label>
+            <Heading id="features-heading" as="h2" style={{ fontSize: 40, letterSpacing: '-0.03em' }}>Everything you need to make every link count.</Heading>
+            <Text style={{ color: 'fg.muted', fontSize: 16, lineHeight: 1.5 }}>From your first share to your thousandth campaign, eslotmain.xyz keeps links simple, recognizable, and measurable.</Text>
+          </Stack>
+          <Stack direction="horizontal" gap="normal">
+            <Feature icon={ZapIcon} eyebrow="FAST TO LAUNCH" title="Shorten in seconds" text="Create clean, shareable links instantly with a simple workflow designed to keep you moving." />
+            <Feature icon={GraphIcon} eyebrow="SMART ANALYTICS" title="Understand every click" text="Track clicks, locations, devices, and referrers so you can repeat what works with confidence." />
+            <Feature icon={LinkIcon} eyebrow="YOUR BRAND" title="Stay recognizable" text="Customize slugs and use branded domains to build trust wherever your links appear." />
+          </Stack>
         </Stack>
       </section>
 
