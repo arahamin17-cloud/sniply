@@ -139,7 +139,11 @@ export default function Page() {
               <Label variant="accent">LINK INTELLIGENCE</Label>
               <Heading as="h2" style={{ fontSize: 40, letterSpacing: '-0.03em' }}>Every click tells a story.</Heading>
               <Text style={{ color: 'fg.muted', fontSize: 16, lineHeight: 1.5 }}>A simple dashboard that helps you understand your audience and grow what matters.</Text>
-              <Button variant="primary" trailingVisual={ArrowRightIcon} style={{ alignSelf: 'flex-start' }}>Explore analytics</Button>
+              <Stack direction="horizontal" gap="normal" style={{ pt: 2 }}>
+                <Metric value="24.8K" label="Total clicks" />
+                <Metric value="68%" label="Returning visitors" />
+              </Stack>
+              <Button as="a" href="#analytics" variant="primary" trailingVisual={ArrowRightIcon} style={{ alignSelf: 'flex-start' }}>Explore analytics</Button>
             </Stack>
             <Stack style={{ width: '100%', maxWidth: 520, overflow: 'hidden', border: '1px solid', borderColor: 'border.default', borderRadius: 2, backgroundColor: 'canvas.default', boxShadow: 'shadow.medium' }}>
               <img src="/campaign-overview.png" alt="Sample campaign overview dashboard showing link performance analytics" style={{ display: 'block', width: '100%', height: 'auto' }} />
@@ -153,6 +157,10 @@ export default function Page() {
       </footer>
     </main>
   )
+}
+
+function Metric({ value, label }: { value: string; label: string }) {
+  return <Stack direction="vertical" gap="none"><Text style={{ fontSize: 24, fontWeight: 'bold', letterSpacing: '-0.02em' }}>{value}</Text><Text style={{ color: 'fg.muted', fontSize: 12 }}>{label}</Text></Stack>
 }
 
 function Feature({ icon: Icon, eyebrow, title, text }: { icon: typeof ZapIcon; eyebrow: string; title: string; text: string }) {
