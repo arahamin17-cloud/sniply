@@ -1,0 +1,22 @@
+@import '@primer/primitives/dist/css/base/size/size.css';
+@import '@primer/primitives/dist/css/base/typography/typography.css';
+@import '@primer/primitives/dist/css/base/motion/motion.css';
+@import '@primer/primitives/dist/css/functional/size/border.css';
+@import '@primer/primitives/dist/css/functional/size/breakpoints.css';
+@import '@primer/primitives/dist/css/functional/size/size-coarse.css';
+@import '@primer/primitives/dist/css/functional/size/size-fine.css';
+@import '@primer/primitives/dist/css/functional/size/size.css';
+@import '@primer/primitives/dist/css/functional/size/viewport.css';
+@import '@primer/primitives/dist/css/functional/typography/typography.css';
+@import '@primer/primitives/dist/css/functional/themes/light.css';
+@import '@primer/primitives/dist/css/functional/themes/dark.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-dimmed.css';
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100vh; background: var(--bgColor-default); color: var(--fgColor-default); font-family: var(--fontStack-system, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif); }
+body { background-image: radial-gradient(circle at 50% -10%, var(--bgColor-accent-muted), transparent 34rem); }
+#__next { min-height: 100vh; }
+.heroGlow { position: absolute; width: 620px; height: 360px; top: 0; left: 50%; transform: translateX(-50%); background: var(--bgColor-accent-muted); filter: blur(70px); opacity: .45; border-radius: 50%; pointer-events: none; }
+@media (max-width: 544px) { .heroGlow { width: 360px; height: 280px; } }
+::selection { background: var(--bgColor-accent-emphasis); color: var(--fgColor-onEmphasis); }
+button, input { font: inherit; }
