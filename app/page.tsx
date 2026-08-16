@@ -9,7 +9,6 @@ import {
   Stack,
   Text,
   TextInput,
-  CounterLabel,
 } from '@primer/react'
 import {
   ArrowRightIcon,
@@ -32,7 +31,7 @@ export default function Page() {
   }
 
   async function copyUrl() {
-    await navigator.clipboard?.writeText('lnk.to/launch-kit')
+    await navigator.clipboard?.writeText('eslotmain.xyz/launch-kit')
     setCopied(true)
   }
 
@@ -58,7 +57,7 @@ export default function Page() {
           >
             <LinkIcon size={18} />
           </Stack>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', letterSpacing: '-0.02em' }}>lnk.to</Text>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', letterSpacing: '-0.02em' }}>eslotmain.xyz</Text>
         </Stack>
         <Stack direction="horizontal" gap="normal" align="center">
           <Link href="#features" muted>Features</Link>
@@ -108,7 +107,7 @@ export default function Page() {
               <Stack direction="horizontal" align="center" justify="space-between" style={{ mt: 3, pt: 3, borderTop: '1px solid', borderColor: 'border.muted' }}>
                 <Stack direction="horizontal" gap="condensed" align="center">
                   <CheckCircleFillIcon fill="var(--fgColor-open)" />
-                  <Text style={{ fontFamily: 'mono', color: 'accent.fg' }}>lnk.to/launch-kit</Text>
+                  <Text style={{ fontFamily: 'mono', color: 'accent.fg' }}>eslotmain.xyz/launch-kit</Text>
                 </Stack>
                 <Button variant="invisible" size="small" leadingVisual={CopyIcon} onClick={copyUrl}>{copied ? 'Copied' : 'Copy link'}</Button>
               </Stack>
@@ -135,22 +134,15 @@ export default function Page() {
               <Text style={{ color: 'fg.muted', fontSize: 16, lineHeight: 1.5 }}>A simple dashboard that helps you understand your audience and grow what matters.</Text>
               <Button variant="primary" trailingVisual={ArrowRightIcon} style={{ alignSelf: 'flex-start' }}>Explore analytics</Button>
             </Stack>
-            <Stack style={{ width: '100%', maxWidth: 520, p: 3, border: '1px solid', borderColor: 'border.default', borderRadius: 2, backgroundColor: 'canvas.default' }}>
-              <Stack direction="horizontal" justify="space-between" align="center" style={{ mb: 4 }}>
-                <Stack direction="vertical" gap="none"><Text style={{ fontWeight: 'bold' }}>Campaign overview</Text><Text style={{ color: 'fg.muted', fontSize: 12 }}>Last 30 days</Text></Stack>
-                <CounterLabel scheme="primary">+24.8%</CounterLabel>
-              </Stack>
-              <Stack direction="horizontal" gap="condensed" align="end" style={{ height: 140 }}>
-                {[38, 55, 48, 82, 64, 96, 76, 108, 91, 124, 112, 136].map((height, index) => <Stack key={index} style={{ flex: 1, height, borderRadius: 1, backgroundColor: index > 8 ? 'accent.emphasis' : 'accent.muted' }} />)}
-              </Stack>
-              <Stack direction="horizontal" justify="space-between" style={{ mt: 2 }}><Text style={{ color: 'fg.muted', fontSize: 12 }}>JUL 18</Text><Text style={{ color: 'fg.muted', fontSize: 12 }}>AUG 16</Text></Stack>
+            <Stack style={{ width: '100%', maxWidth: 520, overflow: 'hidden', border: '1px solid', borderColor: 'border.default', borderRadius: 2, backgroundColor: 'canvas.default', boxShadow: 'shadow.medium' }}>
+              <img src="/campaign-overview.png" alt="Sample campaign overview dashboard showing link performance analytics" style={{ display: 'block', width: '100%', height: 'auto' }} />
             </Stack>
           </Stack>
         </Stack>
       </section>
 
       <footer style={{ borderTop: '1px solid var(--borderColor-default)', padding: '24px', textAlign: 'center' }}>
-        <Text style={{ color: 'fg.muted', fontSize: 12 }}>© 2026 lnk.to · Shorter links. Smarter growth.</Text>
+        <Text style={{ color: 'fg.muted', fontSize: 12 }}>© 2026 eslotmain.xyz · Shorter links. Smarter growth.</Text>
       </footer>
     </main>
   )

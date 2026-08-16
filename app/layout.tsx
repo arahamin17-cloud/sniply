@@ -3,7 +3,7 @@ import './globals.css'
 import { Providers } from '@/components/providers'
 
 export const metadata: Metadata = {
-  title: 'lnk.to — Short links. Big possibilities.',
+  title: 'eslotmain.xyz — Short links. Big possibilities.',
   description: 'Create memorable short links, share them anywhere, and understand every click.',
 }
 
