@@ -2,22 +2,20 @@
 
 import { useState } from 'react'
 import {
-  Button,
-  Heading,
-  Label,
-  Link,
-  Stack,
-  Text,
-  TextInput,
-} from '@primer/react'
-import {
   ArrowRightIcon,
   CheckCircleFillIcon,
+  ChevronRightIcon,
   CopyIcon,
+  DeviceDesktopIcon,
   GraphIcon,
   LinkIcon,
+  LocationIcon,
+  PeopleIcon,
+  RocketIcon,
   ZapIcon,
 } from '@primer/octicons-react'
+
+const shortenedLink = 'eslotmain.xyz/launch-kit'
 
 export default function Page() {
   const [url, setUrl] = useState('')
@@ -31,139 +29,130 @@ export default function Page() {
   }
 
   async function copyUrl() {
-    await navigator.clipboard?.writeText('eslotmain.xyz/launch-kit')
+    await navigator.clipboard?.writeText(shortenedLink)
     setCopied(true)
   }
 
   return (
-    <main style={{ minHeight: '100vh', overflow: 'hidden' }}>
-      <header
-        style={{
-          maxWidth: 1180,
-          margin: '0 auto',
-          padding: '24px 24px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Stack direction="horizontal" gap="condensed" align="center">
-          <Stack
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: 32, height: 32, borderRadius: 2,
-              backgroundColor: 'accent.emphasis', color: 'fg.onEmphasis',
-            }}
-          >
-            <LinkIcon size={18} />
-          </Stack>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', letterSpacing: '-0.02em' }}>eslotmain.xyz</Text>
-        </Stack>
-        <Stack direction="horizontal" gap="normal" align="center">
-          <Link href="#features" muted>Features</Link>
-          <Link href="#analytics" muted>Analytics</Link>
-          <Button variant="invisible" size="small">Sign in</Button>
-          <Button variant="primary" size="small">Get started</Button>
-        </Stack>
-      </header>
+    <main className="site-shell">
+      <nav className="topbar page-width" aria-label="Main navigation">
+        <a className="brand" href="#top" aria-label="eslotmain.xyz home">
+          <span className="brand-mark"><LinkIcon size={17} /></span>
+          <span>eslotmain<span className="brand-dot">.</span>xyz</span>
+        </a>
+        <div className="nav-links">
+          <a href="#features">Features</a>
+          <a href="#analytics">Analytics</a>
+          <a href="#blog">Blog</a>
+          <a className="nav-signin" href="/signin">Sign in</a>
+          <a className="nav-cta" href="/signup">Get started <ArrowRightIcon size={15} /></a>
+        </div>
+        <div className="mobile-actions"><a className="mobile-signin" href="/signin">Sign in</a><a className="mobile-cta" href="/signup">Start free</a></div>
+      </nav>
 
-      <section
-        style={{
-          maxWidth: 1180,
-          margin: '0 auto',
-          padding: '72px 24px 64px',
-          position: 'relative',
-        }}
-      >
-        <div className="heroGlow" aria-hidden="true" />
-        <Stack direction="vertical" gap="spacious" align="center" style={{ position: 'relative' }}>
-          <Stack direction="vertical" gap="normal" align="center" style={{ textAlign: 'center', maxWidth: 760 }}>
-            <Label variant="accent">LINKS, BUT BETTER</Label>
-            <Heading as="h1" variant="large" style={{ fontSize: 64, lineHeight: 1.04, letterSpacing: '-0.045em' }}>
-              Short links.
-              <br />Big possibilities.
-            </Heading>
-            <Text style={{ color: 'fg.muted', fontSize: 18, maxWidth: 620, lineHeight: 1.5 }}>
-              Turn long, messy URLs into memorable links your audience will actually trust — and get the insights to make every click count.
-            </Text>
-          </Stack>
+      <section id="top" className="hero page-width">
+        <div className="hero-orbit hero-orbit-one" aria-hidden="true" />
+        <div className="hero-orbit hero-orbit-two" aria-hidden="true" />
+        <div className="hero-copy">
+          <div className="eyebrow"><span className="eyebrow-line" /> LINKS, BUT BETTER</div>
+          <h1>Make every link<br /><span>worth clicking.</span></h1>
+          <p className="hero-subtitle">Turn long, messy URLs into memorable links your audience can trust — then learn what every click means.</p>
+        </div>
 
-          <Stack
-            style={{ width: '100%', maxWidth: 760, p: [2, 3], border: '1px solid', borderColor: 'border.default', borderRadius: 3, backgroundColor: 'canvas.overlay', boxShadow: 'shadow.large' }}
-          >
-            <Stack direction="horizontal" gap="condensed">
-              <TextInput
+        <div id="shorten" className="shortener-card">
+          <div className="shortener-topline"><span className="live-dot" /> Your next link starts here</div>
+          <div className="shortener-form">
+            <div className="input-wrap">
+              <LinkIcon size={18} className="input-icon" />
+              <input
                 aria-label="Paste a long URL"
-                block
                 value={url}
                 onChange={(event) => setUrl(event.target.value)}
-                placeholder="Paste your long URL here..."
-                leadingVisual={LinkIcon}
-                style={{ flex: 1 }}
+                onKeyDown={(event) => { if (event.key === 'Enter') shortenUrl() }}
+                placeholder="Paste a long URL here..."
               />
-              <Button variant="primary" size="large" onClick={shortenUrl} trailingVisual={ArrowRightIcon}>Shorten URL</Button>
-            </Stack>
-            {shortened && (
-              <Stack direction="horizontal" align="center" justify="space-between" style={{ mt: 3, pt: 3, borderTop: '1px solid', borderColor: 'border.muted' }}>
-                <Stack direction="horizontal" gap="condensed" align="center">
-                  <CheckCircleFillIcon fill="var(--fgColor-open)" />
-                  <Text style={{ fontFamily: 'mono', color: 'accent.fg' }}>eslotmain.xyz/launch-kit</Text>
-                </Stack>
-                <Button variant="invisible" size="small" leadingVisual={CopyIcon} onClick={copyUrl}>{copied ? 'Copied' : 'Copy link'}</Button>
-              </Stack>
-            )}
-          </Stack>
-          <Text style={{ color: 'fg.muted', fontSize: 12 }}>Free forever for personal links · No credit card required</Text>
-        </Stack>
+            </div>
+            <button className="primary-button" type="button" onClick={shortenUrl}>Shorten URL <ArrowRightIcon size={17} /></button>
+          </div>
+          {shortened && (
+            <div className="result-row">
+              <div className="result-link"><CheckCircleFillIcon size={17} /> <span>{shortenedLink}</span></div>
+              <button className="copy-button" type="button" onClick={copyUrl}><CopyIcon size={15} /> {copied ? 'Copied' : 'Copy link'}</button>
+            </div>
+          )}
+          <div className="shortener-foot"><span>Free forever for personal links</span><span>No credit card required</span><span>Ready in seconds</span></div>
+        </div>
+
+        <div className="trust-row"><span>Trusted by teams moving fast</span><span className="trust-divider" /><strong>24.8K+</strong> links created this month</div>
       </section>
 
-      <section id="features" aria-labelledby="features-heading" style={{ maxWidth: 1180, margin: '0 auto', padding: '32px 24px 96px', scrollMarginTop: 24 }}>
-        <Stack direction="vertical" gap="spacious">
-          <Stack direction="vertical" gap="normal" style={{ maxWidth: 620 }}>
-            <Label variant="accent">MADE FOR MOMENTS THAT MATTER</Label>
-            <Heading id="features-heading" as="h2" style={{ fontSize: 40, letterSpacing: '-0.03em' }}>Everything you need to make every link count.</Heading>
-            <Text style={{ color: 'fg.muted', fontSize: 16, lineHeight: 1.5 }}>From your first share to your thousandth campaign, eslotmain.xyz keeps links simple, recognizable, and measurable.</Text>
-          </Stack>
-          <Stack direction="horizontal" gap="normal">
-            <Feature icon={ZapIcon} eyebrow="FAST TO LAUNCH" title="Shorten in seconds" text="Create clean, shareable links instantly with a simple workflow designed to keep you moving." />
-            <Feature icon={GraphIcon} eyebrow="SMART ANALYTICS" title="Understand every click" text="Track clicks, locations, devices, and referrers so you can repeat what works with confidence." />
-            <Feature icon={LinkIcon} eyebrow="YOUR BRAND" title="Stay recognizable" text="Customize slugs and use branded domains to build trust wherever your links appear." />
-          </Stack>
-        </Stack>
+      <section id="features" className="features-section page-width">
+        <div className="section-heading">
+          <div className="eyebrow"><span className="eyebrow-line" /> BUILT FOR MOMENTS THAT MATTER</div>
+          <h2>Simple on the surface.<br /><span>Powerful underneath.</span></h2>
+          <p>Everything you need to share with confidence, understand your audience, and keep your brand in the conversation.</p>
+        </div>
+        <div className="feature-grid">
+          <Feature icon={<ZapIcon size={20} />} eyebrow="FAST TO LAUNCH" title="Shorten in seconds" text="Clean, shareable links without the busywork. Keep your momentum from idea to publish." />
+          <Feature icon={<GraphIcon size={20} />} eyebrow="SMART ANALYTICS" title="Understand every click" text="See what resonates with clicks, locations, devices, and referrers in one calm dashboard." />
+          <Feature icon={<LinkIcon size={20} />} eyebrow="YOUR BRAND" title="Stay recognizable" text="Customize slugs and use branded domains to build trust wherever your links appear." />
+        </div>
       </section>
 
-      <section id="analytics" style={{ maxWidth: 1180, margin: '0 auto', padding: '0 24px 120px' }}>
-        <Stack style={{ border: '1px solid', borderColor: 'border.default', borderRadius: 3, backgroundColor: 'canvas.subtle', p: [3, 5] }}>
-          <Stack direction="horizontal" gap="spacious" align="center" justify="space-between">
-            <Stack direction="vertical" gap="normal" style={{ maxWidth: 430 }}>
-              <Label variant="accent">LINK INTELLIGENCE</Label>
-              <Heading as="h2" style={{ fontSize: 40, letterSpacing: '-0.03em' }}>Every click tells a story.</Heading>
-              <Text style={{ color: 'fg.muted', fontSize: 16, lineHeight: 1.5 }}>A simple dashboard that helps you understand your audience and grow what matters.</Text>
-              <Stack direction="horizontal" gap="normal" style={{ pt: 2 }}>
-                <Metric value="24.8K" label="Total clicks" />
-                <Metric value="68%" label="Returning visitors" />
-              </Stack>
-              <Button as="a" href="#analytics" variant="primary" trailingVisual={ArrowRightIcon} style={{ alignSelf: 'flex-start' }}>Explore analytics</Button>
-            </Stack>
-            <Stack style={{ width: '100%', maxWidth: 520, overflow: 'hidden', border: '1px solid', borderColor: 'border.default', borderRadius: 2, backgroundColor: 'canvas.default', boxShadow: 'shadow.medium' }}>
-              <img src="/campaign-overview.png" alt="Sample campaign overview dashboard showing link performance analytics" style={{ display: 'block', width: '100%', height: 'auto' }} />
-            </Stack>
-          </Stack>
-        </Stack>
+      <section id="analytics" className="analytics-wrap page-width">
+        <div className="analytics-card">
+          <div className="analytics-copy">
+            <div className="eyebrow"><span className="eyebrow-line" /> LINK INTELLIGENCE</div>
+            <h2>Every click<br /><span>tells a story.</span></h2>
+            <p>A focused dashboard that turns link activity into a clearer picture of your audience and what to do next.</p>
+            <div className="metrics">
+              <Metric value="24.8K" label="Total clicks" />
+              <Metric value="68%" label="Returning visitors" />
+              <Metric value="12" label="Top markets" />
+            </div>
+            <a className="secondary-button" href="#analytics">Explore analytics <ChevronRightIcon size={16} /></a>
+          </div>
+          <div className="dashboard-preview">
+            <div className="preview-header"><span className="preview-title"><span className="mini-mark"><GraphIcon size={12} /></span> Campaign overview</span><span className="preview-range">Last 30 days <ChevronRightIcon size={12} /></span></div>
+            <div className="chart-area"><div className="chart-labels"><span>1,200</span><span>800</span><span>400</span><span>0</span></div><div className="chart-grid"><div className="chart-line chart-line-a" /><div className="chart-line chart-line-b" /><div className="chart-line chart-line-c" /></div><div className="chart-bars"><i style={{ height: '27%' }} /><i style={{ height: '38%' }} /><i style={{ height: '31%' }} /><i style={{ height: '48%' }} /><i style={{ height: '45%' }} /><i style={{ height: '62%' }} /><i style={{ height: '59%' }} /><i style={{ height: '78%' }} /><i style={{ height: '72%' }} /><i style={{ height: '92%' }} /><i style={{ height: '84%' }} /><i style={{ height: '100%' }} /></div></div>
+            <div className="preview-stats"><span><PeopleIcon size={14} /> Visitors <strong>8,420</strong></span><span><LocationIcon size={14} /> Top market <strong>United States</strong></span><span><DeviceDesktopIcon size={14} /> Devices <strong>Mobile 72%</strong></span></div>
+          </div>
+        </div>
       </section>
 
-      <footer style={{ borderTop: '1px solid var(--borderColor-default)', padding: '24px', textAlign: 'center' }}>
-        <Text style={{ color: 'fg.muted', fontSize: 12 }}>© 2026 eslotmain.xyz · Shorter links. Smarter growth.</Text>
-      </footer>
+      <section id="blog" className="blog-section page-width">
+        <div className="blog-heading-row">
+          <div className="section-heading">
+            <div className="eyebrow"><span className="eyebrow-line" /> FROM THE LINK LAB</div>
+            <h2>Ideas for your<br /><span>next click.</span></h2>
+            <p>Practical guidance on better sharing, smarter campaigns, and building trust one link at a time.</p>
+          </div>
+          <a className="secondary-button blog-view-all" href="#blog">View all articles <ArrowRightIcon size={15} /></a>
+        </div>
+        <div className="blog-grid">
+          <BlogCard category="LINK STRATEGY" date="6 min read" title="The anatomy of a link people actually want to click" text="Five small details that make a short link feel clearer, safer, and more memorable." accent="blue" />
+          <BlogCard category="CAMPAIGNS" date="8 min read" title="How to turn clicks into a clearer campaign story" text="A simple framework for reading link activity and making your next launch more intentional." accent="violet" />
+          <BlogCard category="BEST PRACTICES" date="5 min read" title="Branded links build trust before the page loads" text="Why recognizable links matter in social posts, email, and every place your audience sees you." accent="teal" />
+        </div>
+      </section>
+
+      <section className="closing-section page-width">
+        <div className="closing-inner"><div className="closing-icon"><RocketIcon size={22} /></div><div><h2>Ready to make your links work harder?</h2><p>Start for free. Upgrade when your audience grows.</p></div><a className="primary-button" href="/signup">Create your free account <ArrowRightIcon size={17} /></a></div>
+      </section>
+
+      <footer className="footer page-width"><a className="brand" href="#top"><span className="brand-mark"><LinkIcon size={15} /></span><span>eslotmain<span className="brand-dot">.</span>xyz</span></a><span>© 2026 eslotmain.xyz · Shorter links. Smarter growth.</span><span>Built for the next click.</span></footer>
     </main>
   )
 }
 
 function Metric({ value, label }: { value: string; label: string }) {
-  return <Stack direction="vertical" gap="none"><Text style={{ fontSize: 24, fontWeight: 'bold', letterSpacing: '-0.02em' }}>{value}</Text><Text style={{ color: 'fg.muted', fontSize: 12 }}>{label}</Text></Stack>
+  return <div className="metric"><strong>{value}</strong><span>{label}</span></div>
 }
 
-function Feature({ icon: Icon, eyebrow, title, text }: { icon: typeof ZapIcon; eyebrow: string; title: string; text: string }) {
-  return <Stack style={{ flex: 1, p: 4, border: '1px solid', borderColor: 'border.default', borderRadius: 2, backgroundColor: 'canvas.default' }}><Stack direction="vertical" gap="normal"><Icon size={24} fill="var(--fgColor-accent)" /><Label variant="accent">{eyebrow}</Label><Heading as="h3" style={{ fontSize: 20 }}>{title}</Heading><Text style={{ color: 'fg.muted', lineHeight: 1.5 }}>{text}</Text></Stack></Stack>
+function Feature({ icon, eyebrow, title, text }: { icon: React.ReactNode; eyebrow: string; title: string; text: string }) {
+  return <article className="feature-card"><div className="feature-icon">{icon}</div><div className="eyebrow feature-eyebrow">{eyebrow}</div><h3>{title}</h3><p>{text}</p><span className="feature-arrow"><ArrowRightIcon size={15} /></span></article>
 }
 
+function BlogCard({ category, date, title, text, accent }: { category: string; date: string; title: string; text: string; accent: 'blue' | 'violet' | 'teal' }) {
+  return <article className={`blog-card blog-${accent}`}><div className="blog-art"><span className="blog-art-mark"><LinkIcon size={22} /></span><span className="blog-art-orbit blog-art-orbit-one" /><span className="blog-art-orbit blog-art-orbit-two" /></div><div className="blog-card-body"><div className="blog-meta"><span>{category}</span><span>{date}</span></div><h3>{title}</h3><p>{text}</p><a className="blog-read" href="#blog">Read article <ArrowRightIcon size={14} /></a></div></article>
+}
