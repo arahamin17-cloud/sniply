@@ -11,6 +11,33 @@ export default function SigninPage() {
   const [submitted, setSubmitted] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [walletLoading, setWalletLoading] = useState(false)
+
+  async function handleWalletSignIn() {
+    setErrorMessage('')
+    setWalletLoading(true)
+    try {
+      const ethereum = (window as Window & { ethereum?: { request: (args: { method: string; params?: unknown[] }) => Promise<unknown> } }).ethereum
+      if (!ethereum) throw new Error('Install a compatible wallet to continue.')
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' }) as string[]
+      const address = accounts[0]
+      if (!address) throw new Error('No wallet account was selected.')
+      const nonceResponse = await fetch('/api/auth/wallet/nonce', { cache: 'no-store' })
+      if (!nonceResponse.ok) throw new Error('Could not start wallet verification.')
+      const { nonce, domain, uri } = await nonceResponse.json() as { nonce: string; domain: string; uri: string }
+      const issuedAt = new Date().toISOString()
+      const expirationTime = new Date(Date.now() + 5 * 60 * 1000).toISOString()
+      const message = `${domain} wants you to sign in with your Ethereum account:\n${address}\n\nSign in to eslotmain.xyz.\n\nURI: ${uri}\nVersion: 1\nChain ID: 1\nNonce: ${nonce}\nIssued At: ${issuedAt}\nExpiration Time: ${expirationTime}`
+      const signature = await ethereum.request({ method: 'personal_sign', params: [message, address] }) as string
+      const verifyResponse = await fetch('/api/auth/wallet/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ address, message, signature }) })
+      if (!verifyResponse.ok) throw new Error('Wallet signature could not be verified.')
+      setSubmitted(true)
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Wallet sign-in failed.')
+    } finally {
+      setWalletLoading(false)
+    }
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -70,6 +97,7 @@ export default function SigninPage() {
                 <div className="form-options"><label className="checkbox-row"><input type="checkbox" /><span>Remember me</span></label><Link href="/forgot-password">Forgot password?</Link></div>
                 <button className="primary-button" type="submit" disabled={isLoading}>{isLoading ? 'Signing in…' : 'Sign in'} <ArrowRightIcon size={16} /></button>
               </form>
+              <button className="outline-button" type="button" onClick={handleWalletSignIn} disabled={walletLoading}>{walletLoading ? 'Verifying wallet…' : 'Sign in with wallet'}</button>
               <div className="auth-divider"><span>New to eslotmain.xyz?</span></div>
               <Link className="outline-button outline-link" href="/signup">Create a free account</Link>
               <p className="secure-note"><LockIcon size={12} /> Your information is encrypted and never sold.</p>
