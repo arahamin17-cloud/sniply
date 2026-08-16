@@ -54,6 +54,11 @@ export default function SignupPage() {
           )}
         </div>
       </section>
+      <footer className="auth-footer page-width">
+        <Link className="brand" href="/" aria-label="eslotmain.xyz home"><span className="brand-mark"><LinkIcon size={14} /></span><span>eslotmain<span className="brand-dot">.</span>xyz</span></Link>
+        <div className="auth-footer-links"><Link href="#privacy">Privacy</Link><Link href="#terms">Terms</Link><Link href="mailto:hello@eslotmain.xyz">Contact</Link></div>
+        <span className="auth-footer-copy">© 2026 eslotmain.xyz</span>
+      </footer>
     </main>
   )
 }
