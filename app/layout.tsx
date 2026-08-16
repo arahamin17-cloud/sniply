@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Providers } from '@/components/providers'
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://eslotmain.xyz'
+const siteUrl = 'https://eslotmain.xyz'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   generator: 'Next.js',
   keywords: ['URL shortener', 'short links', 'branded links', 'link analytics', 'campaign links'],
   alternates: {
-    canonical: '/',
+    canonical: siteUrl,
   },
   openGraph: {
     type: 'website',
