@@ -83,7 +83,7 @@ export default function Page() {
               Short links.
               <br />Big possibilities.
             </Heading>
-            <Text style={{ color: 'fg.muted', fontSize: 18, maxWidth: 620, lineHeight: 1.5 }}>
+            <Text style={{ display: 'grid', color: 'fg.muted', fontSize: 18, maxWidth: 620, lineHeight: 1.5 }}>
               Turn long, messy URLs into memorable links your audience will actually trust — and get the insights to make every click count.
             </Text>
           </Stack>
