@@ -32,7 +32,7 @@ export default function Page() {
   }
 
   async function copyUrl() {
-    await navigator.clipboard?.writeText('lnk.to/launch-kit')
+    await navigator.clipboard?.writeText('eslotmain.xyz/launch-kit')
     setCopied(true)
   }
 
@@ -58,7 +58,7 @@ export default function Page() {
           >
             <LinkIcon size={18} />
           </Stack>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', letterSpacing: '-0.02em' }}>lnk.to</Text>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', letterSpacing: '-0.02em' }}>eslotmain.xyz</Text>
         </Stack>
         <Stack direction="horizontal" gap="normal" align="center">
           <Link href="#features" muted>Features</Link>
@@ -108,7 +108,7 @@ export default function Page() {
               <Stack direction="horizontal" align="center" justify="space-between" style={{ mt: 3, pt: 3, borderTop: '1px solid', borderColor: 'border.muted' }}>
                 <Stack direction="horizontal" gap="condensed" align="center">
                   <CheckCircleFillIcon fill="var(--fgColor-open)" />
-                  <Text style={{ fontFamily: 'mono', color: 'accent.fg' }}>lnk.to/launch-kit</Text>
+                  <Text style={{ fontFamily: 'mono', color: 'accent.fg' }}>eslotmain.xyz/launch-kit</Text>
                 </Stack>
                 <Button variant="invisible" size="small" leadingVisual={CopyIcon} onClick={copyUrl}>{copied ? 'Copied' : 'Copy link'}</Button>
               </Stack>
@@ -150,7 +150,7 @@ export default function Page() {
       </section>
 
       <footer style={{ borderTop: '1px solid var(--borderColor-default)', padding: '24px', textAlign: 'center' }}>
-        <Text style={{ color: 'fg.muted', fontSize: 12 }}>© 2026 lnk.to · Shorter links. Smarter growth.</Text>
+        <Text style={{ color: 'fg.muted', fontSize: 12 }}>© 2026 eslotmain.xyz · Shorter links. Smarter growth.</Text>
       </footer>
     </main>
   )
