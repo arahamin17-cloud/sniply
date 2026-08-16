@@ -15,21 +15,39 @@ import {
   ZapIcon,
 } from '@primer/octicons-react'
 
-const shortenedLink = 'eslotmain.xyz/launch-kit'
-
 export default function Page() {
   const [url, setUrl] = useState('')
-  const [shortened, setShortened] = useState(false)
+  const [shortened, setShortened] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [isShortening, setIsShortening] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  function shortenUrl() {
-    if (!url.trim()) return
-    setShortened(true)
+  async function shortenUrl() {
+    if (!url.trim() || isShortening) return
+    setIsShortening(true)
+    setErrorMessage('')
+    setShortened(null)
     setCopied(false)
+
+    try {
+      const response = await fetch('/api/shorten', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      })
+      const payload = await response.json() as { shortUrl?: string; error?: string }
+      if (!response.ok || !payload.shortUrl) throw new Error(payload.error || 'Unable to shorten this URL right now.')
+      setShortened(payload.shortUrl)
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Unable to shorten this URL right now.')
+    } finally {
+      setIsShortening(false)
+    }
   }
 
   async function copyUrl() {
-    await navigator.clipboard?.writeText(shortenedLink)
+    if (!shortened) return
+    await navigator.clipboard?.writeText(shortened)
     setCopied(true)
   }
 
@@ -69,16 +87,19 @@ export default function Page() {
                 aria-label="Paste a long URL"
                 value={url}
                 onChange={(event) => setUrl(event.target.value)}
-                onKeyDown={(event) => { if (event.key === 'Enter') shortenUrl() }}
+                onKeyDown={(event) => { if (event.key === 'Enter' && !event.nativeEvent.isComposing && event.keyCode !== 229) void shortenUrl() }}
                 placeholder="Paste a long URL here..."
               />
             </div>
-            <button className="primary-button" type="button" onClick={shortenUrl}>Shorten URL <ArrowRightIcon size={17} /></button>
+            <button className="primary-button" type="button" onClick={() => void shortenUrl()} disabled={isShortening}>
+              {isShortening ? 'Shortening…' : 'Shorten URL'} <ArrowRightIcon size={17} />
+            </button>
           </div>
+          {errorMessage && <p className="form-error" role="alert">{errorMessage}</p>}
           {shortened && (
             <div className="result-row">
-              <div className="result-link"><CheckCircleFillIcon size={17} /> <span>{shortenedLink}</span></div>
-              <button className="copy-button" type="button" onClick={copyUrl}><CopyIcon size={15} /> {copied ? 'Copied' : 'Copy link'}</button>
+              <div className="result-link"><CheckCircleFillIcon size={17} /> <span>{shortened}</span></div>
+              <button className="copy-button" type="button" onClick={() => void copyUrl()}><CopyIcon size={15} /> {copied ? 'Copied' : 'Copy link'}</button>
             </div>
           )}
           <div className="shortener-foot"><span>Free forever for personal links</span><span>No credit card required</span><span>Ready in seconds</span></div>
