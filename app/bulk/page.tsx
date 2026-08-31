@@ -6,6 +6,7 @@ import Footer from '@/components/Footer'
 export const metadata: Metadata = {
   title: 'Bulk URL shortener',
   description: 'Shorten up to 10 URLs at once with eslotmain.xyz.',
+  alternates: { canonical: '/bulk' },
 }
 
 export default function BulkPage() {
