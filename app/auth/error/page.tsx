@@ -1,6 +1,12 @@
-'use client'
-
+import type { Metadata } from 'next'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Authentication error',
+  description: 'Authentication link error for eslotmain.xyz.',
+  alternates: { canonical: '/auth/error' },
+  robots: { index: false, follow: false },
+}
 
 export default function AuthErrorPage() {
   return (
