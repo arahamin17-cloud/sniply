@@ -10,6 +10,9 @@ export default function Footer() {
       <div className="site-footer-links">
         <a href="/#features">Features</a>
         <a href="/#analytics">Analytics</a>
+        <a href="/legal">Legal</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
         <a href="mailto:hello@eslotmain.xyz">Contact</a>
       </div>
       <span className="site-footer-copy">© 2026 eslotmain.xyz</span>
