@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   },
   description: 'Create memorable short links, share them anywhere, and understand every click with eslotmain.xyz.',
   applicationName: 'eslotmain.xyz',
+  icons: {
+    icon: [{ url: '/favicon.png', type: 'image/png', sizes: '64x64' }],
+    shortcut: ['/favicon.png'],
+    apple: [{ url: '/favicon.png', type: 'image/png', sizes: '64x64' }],
+  },
   generator: 'Next.js',
   keywords: ['URL shortener', 'short links', 'branded links', 'link analytics', 'campaign links'],
   alternates: {
