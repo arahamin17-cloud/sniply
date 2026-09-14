@@ -1,4 +1,8 @@
-import { createClient } from '@/lib/supabase/server'
+import { auth } from '@/lib/auth'
+import { db } from '@/lib/db'
+import { shortLinks } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
+import { headers } from 'next/headers'
 
 const alphabet = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 
@@ -7,35 +11,34 @@ function createCode(length = 7) {
   return Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join('')
 }
 
-export type ShortLink = {
-  id: string
-  code: string
-  destination: string
-  created_at: string
+export type ShortLink = { id: string; code: string; destination: string; created_at: string; user_id?: string | null }
+
+async function currentUserId() {
+  const session = await auth.api.getSession({ headers: await headers() })
+  return session?.user?.id ?? null
 }
 
 export async function isDestinationTaken(destination: string) {
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('short_links').select('*').eq('destination', destination).maybeSingle()
-  if (error) throw new Error('Unable to check link availability.')
-  return data as ShortLink | null
+  const result = await db.select().from(shortLinks).where(eq(shortLinks.destination, destination)).limit(1)
+  const link = result[0]
+  return link ? { id: link.id, code: link.code, destination: link.destination, created_at: link.createdAt.toISOString(), user_id: link.userId } : null
 }
 
 export async function createLink(destination: string) {
-  const supabase = await createClient()
-
+  const userId = await currentUserId()
   for (let attempt = 0; attempt < 3; attempt += 1) {
-    const { data, error } = await supabase.from('short_links').insert({ code: createCode(), destination }).select('*').single()
-    if (!error && data) return data as ShortLink
-    if (error?.code !== '23505') throw new Error('Unable to create a short link.')
+    const code = createCode()
+    try {
+      const [link] = await db.insert(shortLinks).values({ code, destination, userId }).returning()
+      return { id: link.id, code: link.code, destination: link.destination, created_at: link.createdAt.toISOString(), user_id: link.userId }
+    } catch (error) {
+      if (attempt === 2) throw error
+    }
   }
-
   throw new Error('Unable to generate a unique short link. Please try again.')
 }
 
 export async function getLinkByCode(code: string) {
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('short_links').select('destination').eq('code', code).maybeSingle()
-  if (error) throw new Error('Unable to look up this link.')
-  return data as Pick<ShortLink, 'destination'> | null
+  const result = await db.select({ destination: shortLinks.destination }).from(shortLinks).where(eq(shortLinks.code, code)).limit(1)
+  return result[0] ?? null
 }

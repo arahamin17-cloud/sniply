@@ -61,7 +61,7 @@ export default function Page() {
         </a>
         <div className="nav-links">
           <a href="#features">Features</a>
-          <a href="#analytics">Analytics</a>
+          <a href="/analytics">Analytics</a>
           <a href="/blog">Blog</a>
           <a href="/bulk">Bulk submit</a>
           <a className="nav-signin" href="/signin">Sign in</a>
@@ -133,7 +133,7 @@ export default function Page() {
               <Metric value="68%" label="Returning visitors" />
               <Metric value="12" label="Top markets" />
             </div>
-            <a className="secondary-button" href="#analytics">Explore analytics <ChevronRightIcon size={16} /></a>
+            <a className="secondary-button" href="/analytics">Explore analytics <ChevronRightIcon size={16} /></a>
           </div>
           <div className="dashboard-preview">
             <div className="preview-header"><span className="preview-title"><span className="mini-mark"><GraphIcon size={12} /></span> Campaign overview</span><span className="preview-range">Last 30 days <ChevronRightIcon size={12} /></span></div>
