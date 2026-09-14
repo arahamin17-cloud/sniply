@@ -1,8 +1,10 @@
 'use client'
 
 import { FormEvent, useState } from 'react'
-import { ArrowLeftIcon, ArrowRightIcon, CheckCircleFillIcon, InboxIcon, LinkIcon, LockIcon } from '@primer/octicons-react'
+import { ArrowRightIcon, CheckCircleFillIcon, InboxIcon, LockIcon } from '@primer/octicons-react'
 import Link from 'next/link'
+import SiteHeader from '@/components/SiteHeader'
+import Footer from '@/components/Footer'
 
 export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false)
@@ -17,10 +19,7 @@ export default function ForgotPasswordPage() {
     <main className="auth-shell">
       <div className="auth-orbit auth-orbit-one" aria-hidden="true" />
       <div className="auth-orbit auth-orbit-two" aria-hidden="true" />
-      <nav className="auth-nav page-width">
-        <Link className="brand" href="/" aria-label="eslotmain.xyz home"><span className="brand-mark"><LinkIcon size={17} /></span><span>eslotmain<span className="brand-dot">.</span>xyz</span></Link>
-        <Link className="back-link" href="/signin"><ArrowLeftIcon size={14} /> Back to sign in</Link>
-      </nav>
+      <SiteHeader />
 
       <section className="auth-content page-width reset-content">
         <div className="auth-benefits">
@@ -52,6 +51,7 @@ export default function ForgotPasswordPage() {
           )}
         </div>
       </section>
+      <Footer />
     </main>
   )
 }

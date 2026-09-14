@@ -1,11 +1,13 @@
 import type { ReactNode } from 'react'
 import Footer from './Footer'
+import SiteHeader from './SiteHeader'
 
 type LegalSection = { title: string; content: ReactNode }
 
 export default function LegalPage({ eyebrow, title, intro, sections }: { eyebrow: string; title: string; intro: string; sections: LegalSection[] }) {
   return (
     <div className="inner-page-shell">
+      <SiteHeader />
       <main className="page-width legal-page">
         <p className="eyebrow">{eyebrow}</p>
         <h1>{title}</h1>

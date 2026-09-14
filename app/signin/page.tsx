@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeftIcon, ArrowRightIcon, CheckCircleFillIcon, LinkIcon, LockIcon, RocketIcon } from '@primer/octicons-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import SiteHeader from '@/components/SiteHeader'
 
 export default function SigninPage() {
   const router = useRouter()
@@ -71,10 +72,7 @@ export default function SigninPage() {
     <main className="auth-shell">
       <div className="auth-orbit auth-orbit-one" aria-hidden="true" />
       <div className="auth-orbit auth-orbit-two" aria-hidden="true" />
-      <nav className="auth-nav page-width">
-        <Link className="brand" href="/" aria-label="eslotmain.xyz home"><span className="brand-mark"><LinkIcon size={17} /></span><span>eslotmain<span className="brand-dot">.</span>xyz</span></Link>
-        <Link className="back-link" href="/"><ArrowLeftIcon size={14} /> Back to home</Link>
-      </nav>
+      <SiteHeader />
 
       <section className="auth-content page-width signin-content">
         <div className="auth-benefits">
@@ -107,7 +105,7 @@ export default function SigninPage() {
       </section>
       <footer className="auth-footer page-width">
         <Link className="brand" href="/" aria-label="eslotmain.xyz home"><span className="brand-mark"><LinkIcon size={14} /></span><span>eslotmain<span className="brand-dot">.</span>xyz</span></Link>
-        <div className="auth-footer-links"><Link href="#privacy">Privacy</Link><Link href="#terms">Terms</Link><Link href="mailto:hello@eslotmain.xyz">Contact</Link></div>
+        <div className="auth-footer-links"><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/legal">Legal</Link><Link href="mailto:hello@eslotmain.xyz">Contact</Link></div>
         <span className="auth-footer-copy">© 2026 eslotmain.xyz</span>
       </footer>
     </main>

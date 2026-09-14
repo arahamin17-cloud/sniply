@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
-import { ArrowLeftIcon, LinkIcon } from '@primer/octicons-react'
+import { ArrowLeftIcon } from '@primer/octicons-react'
 import BulkShortener from '@/components/BulkShortener'
 import Footer from '@/components/Footer'
+import SiteHeader from '@/components/SiteHeader'
 
 export const metadata: Metadata = {
   title: 'Bulk URL shortener',
@@ -12,16 +13,7 @@ export const metadata: Metadata = {
 export default function BulkPage() {
   return (
     <main className="site-shell inner-page-shell">
-      <nav className="topbar page-width" aria-label="Main navigation">
-        <a className="brand" href="/" aria-label="eslotmain.xyz home">
-          <span className="brand-mark"><LinkIcon size={17} /></span>
-          <span>eslotmain<span className="brand-dot">.</span>xyz</span>
-        </a>
-        <div className="nav-links">
-          <a href="/">Home</a>
-          <a className="nav-cta" href="/bulk">Bulk shortener</a>
-        </div>
-      </nav>
+      <SiteHeader />
       <section className="bulk-page-intro page-width">
         <a className="back-link" href="/"><ArrowLeftIcon size={14} /> Back to home</a>
         <p className="eyebrow"><span className="eyebrow-line" /> BULK LINK WORKSPACE</p>
