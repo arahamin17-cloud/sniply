@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Footer from '@/components/Footer'
 import {
   ArrowRightIcon,
   CheckCircleFillIcon,
@@ -162,7 +163,7 @@ export default function Page() {
         <div className="closing-inner"><div className="closing-icon"><RocketIcon size={22} /></div><div><h2>Ready to make your links work harder?</h2><p>Start for free. Upgrade when your audience grows.</p></div><a className="primary-button" href="/signup">Create your free account <ArrowRightIcon size={17} /></a></div>
       </section>
 
-      <footer className="footer page-width"><a className="brand" href="#top"><span className="brand-mark"><LinkIcon size={15} /></span><span>eslotmain<span className="brand-dot">.</span>xyz</span></a><span>© 2026 eslotmain.xyz · Shorter links. Smarter growth.</span><span>Built for the next click.</span></footer>
+      <Footer />
     </main>
   )
 }

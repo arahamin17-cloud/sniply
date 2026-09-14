@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Footer from '@/components/Footer'
 import { blogPosts } from '@/lib/blog'
+import SiteHeader from '@/components/SiteHeader'
 
 export const metadata: Metadata = {
   title: 'All Published Articles on Eslotmain Blog',
@@ -12,10 +13,7 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   return (
     <main className="site-shell inner-page-shell">
-      <nav className="topbar page-width" aria-label="Main navigation">
-        <Link className="brand" href="/" aria-label="eslotmain.xyz home"><span className="brand-mark">↗</span><span>eslotmain<span className="brand-dot">.</span>xyz</span></Link>
-        <div className="nav-links"><Link href="/bulk">Bulk submit</Link><Link className="nav-signin" href="/signin">Sign in</Link></div>
-      </nav>
+      <SiteHeader />
       <div className="page-width blog-page">
         <p className="eyebrow">ESLOTMAIN / JOURNAL</p>
         <h1>All Published Articles on Eslotmain Blog</h1>
