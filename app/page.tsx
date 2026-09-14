@@ -61,7 +61,7 @@ export default function Page() {
         <div className="nav-links">
           <a href="#features">Features</a>
           <a href="#analytics">Analytics</a>
-          <a href="#blog">Blog</a>
+          <a href="/blog">Blog</a>
           <a href="/bulk">Bulk submit</a>
           <a className="nav-signin" href="/signin">Sign in</a>
           <a className="nav-cta" href="/signup">Get started <ArrowRightIcon size={15} /></a>
