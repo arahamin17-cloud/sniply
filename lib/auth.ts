@@ -6,6 +6,15 @@ import { Resend } from 'resend'
 
 const resetSender = process.env.RESEND_EMAIL_DOMAIN ? `eslotmain <no-reply@${process.env.RESEND_EMAIL_DOMAIN}>` : 'eslotmain <onboarding@resend.dev>'
 
+async function sendTransactionalEmail({ to, subject, html, idempotencyKey }: { to: string; subject: string; html: string; idempotencyKey: string }) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const { error } = await resend.emails.send({ from: resetSender, to: [to], subject, html }, { idempotencyKey })
+  if (error) {
+    logAuthError('Transactional email failed', error)
+    throw new Error('Unable to send email')
+  }
+}
+
 function logAuthError(label: string, error: unknown) {
   console.error(`[v0] ${label}`, error instanceof Error ? error.message : error)
 }
@@ -26,19 +35,27 @@ export const auth = betterAuth({
   trustedOrigins: origins,
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
-      const resend = new Resend(process.env.RESEND_API_KEY)
-      const { error } = await resend.emails.send({
-        from: resetSender,
-        to: [user.email],
+      await sendTransactionalEmail({
+        to: user.email,
         subject: 'Reset your eslotmain password',
         html: `<p>We received a request to reset your eslotmain password.</p><p><a href="${url}">Reset your password</a></p><p>If you did not request this, you can safely ignore this email.</p>`,
-      }, { idempotencyKey: `password-reset/${user.id}/${new URL(url).searchParams.get('token') ?? 'request'}` })
-      if (error) {
-        logAuthError('Password reset email failed', error)
-        throw new Error('Unable to send password reset email')
-      }
+        idempotencyKey: `password-reset/${user.id}/${new URL(url).searchParams.get('token') ?? 'request'}`,
+      })
     },
+  },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendTransactionalEmail({
+        to: user.email,
+        subject: 'Verify your eslotmain account',
+        html: `<p>Welcome to eslotmain.</p><p>Please verify your email address to activate your account:</p><p><a href="${url}">Verify my email</a></p>`,
+        idempotencyKey: `email-verification/${user.id}/${new URL(url).searchParams.get('token') ?? 'request'}`,
+      })
+    },
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
   },
   advanced: {
     database: { generateId: 'uuid' },
