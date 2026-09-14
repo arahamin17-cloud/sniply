@@ -6,12 +6,18 @@ import { Resend } from 'resend'
 
 const resetSender = process.env.RESEND_EMAIL_DOMAIN ? `eslotmain <no-reply@${process.env.RESEND_EMAIL_DOMAIN}>` : 'eslotmain <onboarding@resend.dev>'
 
+function logAuthError(label: string, error: unknown) {
+  console.error(`[v0] ${label}`, error instanceof Error ? error.message : error)
+}
+
 const origins = [
-  ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000', process.env.V0_RUNTIME_URL, process.env.V0_DEV_APP_URL, process.env.V0_BUILD_URL, process.env.V0_SANDBOX_URL] : []),
-  ...(process.env.NODE_ENV === 'production' ? [
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
-    process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : undefined,
-  ] : []),
+  'http://localhost:3000',
+  process.env.V0_RUNTIME_URL,
+  process.env.V0_DEV_APP_URL,
+  process.env.V0_BUILD_URL,
+  process.env.V0_SANDBOX_URL,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+  process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : undefined,
 ].filter((origin): origin is string => Boolean(origin))
 
 export const auth = betterAuth({
@@ -28,12 +34,16 @@ export const auth = betterAuth({
         subject: 'Reset your eslotmain password',
         html: `<p>We received a request to reset your eslotmain password.</p><p><a href="${url}">Reset your password</a></p><p>If you did not request this, you can safely ignore this email.</p>`,
       }, { idempotencyKey: `password-reset/${user.id}/${new URL(url).searchParams.get('token') ?? 'request'}` })
-      if (error) throw new Error('Unable to send password reset email')
+      if (error) {
+        logAuthError('Password reset email failed', error)
+        throw new Error('Unable to send password reset email')
+      }
     },
   },
-  ...(process.env.NODE_ENV === 'development' ? {
-    advanced: {
+  advanced: {
+    database: { generateId: 'uuid' },
+    ...(process.env.NODE_ENV === 'development' ? {
       defaultCookieAttributes: { sameSite: 'none' as const, secure: true },
-    },
-  } : {}),
+    } : {}),
+  },
 })
