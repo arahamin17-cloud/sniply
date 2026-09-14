@@ -22,10 +22,14 @@ export default function AuthForm({ mode }: { mode: 'signin' | 'signup' }) {
       : await authClient.signIn.email({ email, password })
     setPending(false)
     if (result.error) {
-      setError('We could not complete that request. Check your details and try again.')
+      setError(mode === 'signup' ? 'We could not create your account. Check your details and try again.' : 'We could not sign you in. Check your email and password, then try again.')
       return
     }
-    router.push('/')
+    if (mode === 'signup') {
+      setError('Account created. Check your inbox to verify your email before signing in.')
+      return
+    }
+    router.replace('/')
     router.refresh()
   }
 
