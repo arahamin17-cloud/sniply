@@ -30,11 +30,14 @@ export default function AuthForm({ mode }: { mode: 'signin' | 'signup' }) {
   }
 
   return <form className="auth-form" onSubmit={submit}>
-    {mode === 'signup' && <label>Name<input required value={name} onChange={(event) => setName(event.target.value)} /></label>}
-    <label>Email<input required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>
-    <label>Password<input required minLength={8} type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} value={password} onChange={(event) => setPassword(event.target.value)} /></label>
+    <div className="auth-form-intro"><span className="eyebrow">ESLOTMAIN / ACCOUNT</span><h1>{mode === 'signup' ? 'Create your account' : 'Welcome back'}</h1><p>{mode === 'signup' ? 'Save links, monitor clicks, and keep your workflow moving.' : 'Sign in to manage your short links and view analytics.'}</p></div>
+    <div className="auth-form-fields">
+      {mode === 'signup' && <label>Name<input required autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} /></label>}
+      <label>Email<input required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>
+      <label>Password<input required minLength={8} type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} value={password} onChange={(event) => setPassword(event.target.value)} /></label>
+    </div>
     {error && <p className="form-error" role="alert">{error}</p>}
-    <button className="primary-button" type="submit" disabled={pending}>{pending ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Sign in'}</button>
+    <button className="primary-button auth-submit" type="submit" disabled={pending}>{pending ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Sign in'}</button>
     <p className="auth-switch">{mode === 'signup' ? 'Already have an account?' : 'New to eslotmain.xyz?'} <Link href={mode === 'signup' ? '/signin' : '/signup'}>{mode === 'signup' ? 'Sign in' : 'Create one'}</Link></p>
   </form>
 }
