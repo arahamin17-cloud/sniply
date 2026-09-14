@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from 'react'
 import { ArrowRightIcon, CheckCircleFillIcon, InboxIcon, LockIcon } from '@primer/octicons-react'
+import { authClient } from '@/lib/auth-client'
 import Link from 'next/link'
 import SiteHeader from '@/components/SiteHeader'
 import Footer from '@/components/Footer'
@@ -10,8 +11,19 @@ export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false)
   const [email, setEmail] = useState('')
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const [pending, setPending] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setPending(true)
+    setError('')
+    const result = await authClient.requestPasswordReset({ email, redirectTo: `${window.location.origin}/reset-password` })
+    setPending(false)
+    if (result.error) {
+      setError('We could not process that request. Please try again.')
+      return
+    }
     setSubmitted(true)
   }
 
@@ -42,7 +54,7 @@ export default function ForgotPasswordPage() {
               <p className="reset-card-instruction">Enter your account email below. You will receive a secure link to create a new password.</p>
               <form className="signup-form" onSubmit={handleSubmit}>
                 <label>Email address<input type="email" name="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="alex@company.com" required /></label>
-                <button className="primary-button" type="submit">Send reset link <ArrowRightIcon size={16} /></button>
+                {error && <p className="form-error" role="alert">{error}</p>}<button className="primary-button" type="submit" disabled={pending}>{pending ? 'Sending…' : 'Send reset link'} <ArrowRightIcon size={16} /></button>
               </form>
               <div className="auth-divider"><span>Remember your password?</span></div>
               <Link className="outline-button outline-link" href="/signin">Return to sign in</Link>

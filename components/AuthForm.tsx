@@ -38,6 +38,7 @@ export default function AuthForm({ mode }: { mode: 'signin' | 'signup' }) {
     </div>
     {error && <p className="form-error" role="alert">{error}</p>}
     <button className="primary-button auth-submit" type="submit" disabled={pending}>{pending ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Sign in'}</button>
+    {mode === 'signin' && <Link className="auth-forgot" href="/forgot-password">Forgot password?</Link>}
     <p className="auth-switch">{mode === 'signup' ? 'Already have an account?' : 'New to eslotmain.xyz?'} <Link href={mode === 'signup' ? '/signin' : '/signup'}>{mode === 'signup' ? 'Sign in' : 'Create one'}</Link></p>
   </form>
 }
