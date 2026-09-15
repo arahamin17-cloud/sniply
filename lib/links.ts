@@ -1,8 +1,7 @@
-import { auth } from '@/lib/auth'
+import { auth } from '@clerk/nextjs/server'
 import { db } from '@/lib/db'
 import { shortLinks } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { headers } from 'next/headers'
 
 const alphabet = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 
@@ -14,8 +13,8 @@ function createCode(length = 7) {
 export type ShortLink = { id: string; code: string; destination: string; created_at: string; user_id?: string | null }
 
 async function currentUserId() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  return session?.user?.id ?? null
+  const { userId } = await auth()
+  return userId ?? null
 }
 
 export async function isDestinationTaken(destination: string) {

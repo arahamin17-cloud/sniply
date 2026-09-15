@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import SiteHeader from '@/components/SiteHeader'
 import Footer from '@/components/Footer'
 import AuthForm from '@/components/AuthForm'
