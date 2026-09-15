@@ -1,4 +1,5 @@
-import { auth } from '@clerk/nextjs/server'
+import { headers } from 'next/headers'
+import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { shortLinks } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
@@ -13,8 +14,8 @@ function createCode(length = 7) {
 export type ShortLink = { id: string; code: string; destination: string; created_at: string; user_id?: string | null }
 
 async function currentUserId() {
-  const { userId } = await auth()
-  return userId ?? null
+  const session = await auth.api.getSession({ headers: await headers() })
+  return session?.user.id ?? null
 }
 
 export async function isDestinationTaken(destination: string) {

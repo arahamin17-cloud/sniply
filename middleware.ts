@@ -1,8 +1,18 @@
-import { updateSession } from '@/lib/supabase/proxy'
-import { type NextRequest } from 'next/server'
+import { auth } from '@/lib/auth'
+import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+  if (!request.nextUrl.pathname.startsWith('/analytics')) {
+    return NextResponse.next()
+  }
+
+  const session = await auth.api.getSession({ headers: request.headers })
+  if (session?.user) return NextResponse.next()
+
+  const url = request.nextUrl.clone()
+  url.pathname = '/signin'
+  url.searchParams.set('callbackURL', request.nextUrl.pathname)
+  return NextResponse.redirect(url)
 }
 
 export const config = {
