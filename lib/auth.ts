@@ -21,6 +21,8 @@ function logAuthError(label: string, error: unknown) {
 
 const origins = [
   'http://localhost:3000',
+  'https://eslotmain.xyz',
+  process.env.BETTER_AUTH_URL,
   process.env.V0_RUNTIME_URL,
   process.env.V0_DEV_APP_URL,
   process.env.V0_BUILD_URL,
@@ -31,8 +33,15 @@ const origins = [
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: 'pg', schema: { user: schema.user, session: schema.session, account: schema.account, verification: schema.verification } }),
-  baseURL: process.env.BETTER_AUTH_URL ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.V0_RUNTIME_URL),
+  baseURL: process.env.BETTER_AUTH_URL ?? 'https://eslotmain.xyz',
+  secret: process.env.BETTER_AUTH_SECRET,
   trustedOrigins: origins,
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+    },
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,

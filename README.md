@@ -24,6 +24,22 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Authentication configuration
+
+Authentication uses Better Auth with Drizzle and Neon Postgres. Configure these environment variables in Vercel and in local development:
+
+```bash
+NEON_DATABASE_URL=postgresql://...
+BETTER_AUTH_SECRET=replace-with-a-long-random-secret
+BETTER_AUTH_URL=https://eslotmain.xyz
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+RESEND_API_KEY=...
+RESEND_EMAIL_DOMAIN=...
+```
+
+In Google Cloud Console, add `https://eslotmain.xyz/api/auth/callback/google` as an authorized redirect URI. Add `http://localhost:3000/api/auth/callback/google` for local testing. The Neon database must contain the `neon_auth.user`, `neon_auth.session`, `neon_auth.account`, and `neon_auth.verification` tables used by the Drizzle adapter.
+
 ## Learn More
 
 To learn more, take a look at the following resources:

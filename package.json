@@ -9,7 +9,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@clerk/nextjs": "^7.9.2",
     "@primer/octicons-react": "^19.28.1",
     "@primer/primitives": "^11.9.0",
     "@primer/react": "^38.27.0",
