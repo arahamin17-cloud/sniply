@@ -1,16 +1,13 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-export function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith('/analytics')) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/signin'
-    url.searchParams.set('callbackURL', request.nextUrl.pathname)
-    return NextResponse.redirect(url)
+const isProtectedRoute = createRouteMatcher(['/analytics(.*)', '/api/analytics(.*)'])
+
+export default clerkMiddleware(async (auth, request) => {
+  if (isProtectedRoute(request)) {
+    await auth.protect()
   }
-
-  return NextResponse.next()
-}
+})
 
 export const config = {
-  matcher: ['/analytics/:path*'],
+  matcher: ['/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|map|txt|xml|pdf|zip)).*)', '/(api|trpc)(.*)'],
 }
