@@ -1,7 +1,4 @@
 'use client'
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { auth } from '@/lib/auth'
 import { FormEvent, useState } from 'react'
 import SiteHeader from '@/components/SiteHeader'
 import Footer from '@/components/Footer'
