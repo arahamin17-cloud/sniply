@@ -26,7 +26,7 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 ## Authentication configuration
 
-Authentication uses Better Auth with Drizzle and Neon Postgres. Configure these environment variables in Vercel and in local development:
+Authentication uses Better Auth with Drizzle and Neon Postgres (email + password with email verification, and Google). Sign-in, sign-up, the account page (`/account`), password reset and the link-analytics API all use this one system. Configure these environment variables in Vercel (Production scope) and locally, then **redeploy** - Vercel only applies env changes to new deployments:
 
 ```bash
 NEON_DATABASE_URL=postgresql://...
@@ -35,10 +35,12 @@ BETTER_AUTH_URL=https://eslotmain.xyz
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
 RESEND_API_KEY=...
-RESEND_EMAIL_DOMAIN=...
+RESEND_EMAIL_DOMAIN=eslotmain.xyz
 ```
 
-In Google Cloud Console, add `https://eslotmain.xyz/api/auth/callback/google` as an authorized redirect URI. Add `http://localhost:3000/api/auth/callback/google` for local testing. The Neon database must contain the `neon_auth.user`, `neon_auth.session`, `neon_auth.account`, and `neon_auth.verification` tables used by the Drizzle adapter.
+- **Google:** in Google Cloud Console add `https://eslotmain.xyz/api/auth/callback/google` as an authorized redirect URI (and `http://localhost:3000/api/auth/callback/google` for local testing). If the OAuth consent screen is in "Testing" mode, only listed test users can sign in - publish it for everyone.
+- **Email:** `RESEND_EMAIL_DOMAIN` must be a bare domain that is *verified in Resend* (Resend dashboard > Domains). Without it the app falls back to `onboarding@resend.dev`, which Resend only delivers to the email address of your own Resend account. Send failures are logged as `[auth] Resend rejected ...` in the Vercel runtime logs.
+- **Database:** the Neon database must contain the `neon_auth.user`, `neon_auth.session`, `neon_auth.account`, and `neon_auth.verification` tables used by the Drizzle adapter.
 
 ## Learn More
 
