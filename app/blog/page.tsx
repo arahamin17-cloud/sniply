@@ -5,8 +5,8 @@ import { blogPosts } from '@/lib/blog'
 import SiteHeader from '@/components/SiteHeader'
 
 export const metadata: Metadata = {
-  title: 'All Published Articles on Eslotmain Blog',
-  description: 'Practical guides and ideas for shortening, organizing, and sharing links with Eslotmain.',
+  title: 'Read Eslotmain Blog',
+  description: 'Useful guides and ideas for shortening, organizing, and sharing links with Eslotmain.',
   alternates: { canonical: '/blog' },
 }
 
@@ -17,7 +17,7 @@ export default function BlogPage() {
       <div className="page-width blog-page">
         <p className="eyebrow">ESLOTMAIN / JOURNAL</p>
         <h1>All Published Articles on Eslotmain Blog</h1>
-        <p className="blog-intro">Clear, practical ideas for making long links easier to manage, share, and understand. Explore product guides and simple workflows built around better link sharing.</p>
+        <p className="blog-intro">Make your long links easier to manage, share, and understand. Explore product guides and simple workflows built around better link sharing.</p>
         <div className="blog-list">
           {blogPosts.map((post) => (
             <article className="blog-list-item" key={post.slug}>
