@@ -241,7 +241,8 @@ a { color: inherit; text-decoration: none; }
 .auth-switch { margin: 0; color: var(--muted); text-align: center; font-size: 12px; }
 .auth-switch a, .auth-forgot { color: var(--teal); font-weight: 700; }
 .auth-forgot { justify-self: end; font-size: 11px; }
-.auth-form-wrap { padding: 0 32px 27px; }
+.auth-form-wrap { padding: 32px; }
+.auth-form-wrap .auth-switch { margin-top: 22px; }
 .google-button { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; }
 .google-mark { color: #fff; font-size: 15px; font-weight: 800; }
 .auth-inline-success { padding: 32px; }
@@ -294,3 +295,14 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 520px) { .auth-footer { align-items: flex-start; flex-direction: column; gap: 12px; } .auth-footer-links { gap: 16px; } .auth-nav { height: 72px; } .auth-content { min-height: auto; padding: 55px 0 75px; } .auth-benefits h1 { font-size: clamp(46px, 14vw, 64px); } .auth-intro { font-size: 14px; } .auth-note { margin-top: 30px; } .auth-form { padding: 24px; } }
 @media (max-width: 760px) { .auth-shell { overflow-x: hidden; } .auth-nav .brand { font-size: 14px; } .auth-content { width: min(100% - 34px, 600px); } .auth-card { justify-self: stretch; } }
 @media (max-width: 440px) { .auth-content { width: min(100% - 28px, 420px); } .auth-nav { width: min(100% - 28px, 420px); } .auth-nav .back-link { font-size: 10px; } }
+
+/* Auth: success notice + account page */
+.form-notice { margin: -4px 0 0; padding: 10px 12px; color: #a7f0d8; border: 1px solid rgba(98, 228, 196, .25); border-radius: 7px; background: rgba(40, 140, 110, .12); font-size: 11px; line-height: 1.45; }
+.signup-success .form-notice, .signup-success .form-error { margin: 0 0 16px; }
+.signup-success .outline-button { max-width: 320px; }
+.account-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
+.account-details { display: grid; gap: 16px; margin: 0; }
+.account-details div { display: grid; gap: 4px; }
+.account-details dt { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.account-details dd { margin: 0; color: var(--ink); font-size: 14px; overflow-wrap: anywhere; }
+.account-actions { display: grid; gap: 10px; }

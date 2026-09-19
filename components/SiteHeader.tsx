@@ -1,4 +1,5 @@
 import { LinkIcon } from '@primer/octicons-react'
+import HeaderAuth from '@/components/HeaderAuth'
 
 export default function SiteHeader() {
   return (
@@ -12,7 +13,7 @@ export default function SiteHeader() {
         <a href="/blog">Blog</a>
         <a href="/analytics">Analytics</a>
         <a href="/bulk">Bulk shortener</a>
-        <a className="nav-signin" href="/signin">Sign in</a>
+        <HeaderAuth />
       </div>
     </nav>
   )
