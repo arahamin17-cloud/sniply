@@ -1,4 +1,4 @@
-import { boolean, jsonb, pgSchema, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, pgSchema, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 const neonAuth = pgSchema('neon_auth')
 
@@ -59,18 +59,5 @@ export const shortLinks = pgTable('short_links', {
 export const shortLinkEvents = pgTable('short_link_events', {
   id: uuid('id').primaryKey().defaultRandom(),
   code: text('code').notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-})
-
-export const blogPosts = pgTable('blog_posts', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  slug: text('slug').notNull().unique(),
-  title: text('title').notNull(),
-  description: text('description').notNull(),
-  publishedAt: text('published_at').notNull(),
-  updatedAt: text('updated_at').notNull(),
-  readTime: text('read_time').notNull(),
-  excerpt: text('excerpt').notNull(),
-  sections: jsonb('sections').$type<{ heading: string; paragraphs: string[] }[]>().notNull().default([]),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })

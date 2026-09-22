@@ -3,21 +3,21 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Footer from '@/components/Footer'
 import { SharePost } from '@/components/BlogComponents'
-import { getPublishedBlogPosts, getBlogPost } from '@/lib/blog'
+import { blogPosts, getBlogPost } from '@/lib/blog'
 import SiteHeader from '@/components/SiteHeader'
 
 type Props = { params: Promise<{ slug: string }> }
 
-export async function generateStaticParams() { return (await getPublishedBlogPosts()).map((post) => ({ slug: post.slug })) }
+export function generateStaticParams() { return blogPosts.map((post) => ({ slug: post.slug })) }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await getBlogPost((await params).slug)
+  const post = getBlogPost((await params).slug)
   if (!post) return { title: 'Article not found' }
   return { title: post.title, description: post.description, alternates: { canonical: `/blog/${post.slug}` }, openGraph: { type: 'article', title: post.title, description: post.description, publishedTime: post.publishedAt, modifiedTime: post.updatedAt } }
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  const post = await getBlogPost((await params).slug)
+  const post = getBlogPost((await params).slug)
   if (!post) notFound()
   const article = post!
   const schema = { '@context': 'https://schema.org', '@type': 'Article', headline: article.title, description: article.description, datePublished: article.publishedAt, dateModified: article.updatedAt, author: { '@type': 'Organization', name: 'Eslotmain' }, publisher: { '@type': 'Organization', name: 'Eslotmain', url: 'https://eslotmain.xyz' }, mainEntityOfPage: `https://eslotmain.xyz/blog/${article.slug}` }

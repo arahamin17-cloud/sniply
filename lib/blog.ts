@@ -9,7 +9,7 @@ export type BlogPost = {
   sections: { heading: string; paragraphs: string[] }[]
 }
 
-const fallbackBlogPosts: BlogPost[] = [
+export const blogPosts: BlogPost[] = [
   {
     slug: 'bulk-url-shortener',
     title: 'How to Shorten Multiple URLs at Once with Eslotmain',
@@ -27,29 +27,6 @@ const fallbackBlogPosts: BlogPost[] = [
   },
 ]
 
-import { desc, eq } from 'drizzle-orm'
-import { db } from '@/lib/db'
-import { blogPosts as blogPostsTable } from '@/lib/db/schema'
-
-function rowToPost(row: typeof blogPostsTable.$inferSelect): BlogPost {
-  return { ...row, sections: row.sections }
-}
-
-export async function getPublishedBlogPosts(): Promise<BlogPost[]> {
-  try {
-    const rows = await db.select().from(blogPostsTable).orderBy(desc(blogPostsTable.publishedAt))
-    return rows.length ? rows.map(rowToPost) : fallbackBlogPosts
-  } catch {
-    return fallbackBlogPosts
-  }
-}
-
-export async function getBlogPost(slug: string) {
-  try {
-    const rows = await db.select().from(blogPostsTable).where(eq(blogPostsTable.slug, slug)).limit(1)
-    if (rows[0]) return rowToPost(rows[0])
-  } catch {
-    // Use the checked-in article while the database is unavailable.
-  }
-  return fallbackBlogPosts.find((post) => post.slug === slug)
+export function getBlogPost(slug: string) {
+  return blogPosts.find((post) => post.slug === slug)
 }
