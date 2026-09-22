@@ -27,7 +27,7 @@ export default function BlogDashboard({ initialPosts }: { initialPosts: Post[] }
   const [deleting, setDeleting] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
-  const [encodedUrl] = encodeURIComponent(url)
+ 
   function startCreate() {
     setEditingSlug(null)
     setForm(emptyForm)
