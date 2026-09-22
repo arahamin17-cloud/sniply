@@ -1,5 +1,4 @@
 'use client'
-
 import { FormEvent, useState } from 'react'
 import SiteHeader from '@/components/SiteHeader'
 import Footer from '@/components/Footer'

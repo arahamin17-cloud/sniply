@@ -1,32 +1,177 @@
-export type BlogPost = {
+import { and, desc, eq } from 'drizzle-orm'
+import { db } from '@/lib/db'
+import { blogPosts } from '@/lib/db/schema'
+
+export type BlogPostRecord = {
+  id: string
   slug: string
   title: string
   description: string
+  excerpt: string
+  content: string
+  readTime: string
+  published: boolean
   publishedAt: string
   updatedAt: string
-  readTime: string
-  excerpt: string
-  sections: { heading: string; paragraphs: string[] }[]
 }
 
-export const blogPosts: BlogPost[] = [
-  {
-    slug: 'bulk-url-shortener',
-    title: 'How to Shorten Multiple URLs at Once with Eslotmain',
-    description: 'Learn how Eslotmain’s bulk URL shortener helps you turn up to ten long links into clean, shareable short URLs in one submission.',
-    publishedAt: '2026-09-14',
-    updatedAt: '2026-09-14',
-    readTime: '4 min read',
-    excerpt: 'Managing several campaign links should not mean repeating the same task over and over. Eslotmain’s bulk URL shortener gives you a faster way to organize, shorten, and share multiple destinations from one focused workspace.',
-    sections: [
-      { heading: 'Why bulk shortening is useful', paragraphs: ['Long URLs are difficult to read, copy, and place in campaign materials. When a launch includes separate links for email, social, partners, and tracking variations, shortening each URL individually can quickly become repetitive.', 'A bulk workflow keeps those destinations together. You can review the full set before submitting, reduce manual switching, and leave with a clear list of short links ready to copy.'] },
-      { heading: 'How Eslotmain bulk shortening works', paragraphs: ['Open the Bulk submit page from the site navigation and paste one destination URL per row. The tool accepts up to ten HTTP or HTTPS URLs in a single submission and validates each entry before it creates anything.', 'After submission, Eslotmain returns a short link for every valid destination. Existing destinations can be recognized and reused, helping avoid unnecessary duplicate links while keeping your workflow predictable.'] },
-      { heading: 'A simple workflow for campaigns', paragraphs: ['Start by collecting the final destination URLs in a document or spreadsheet. Paste them into the bulk form, check that each link points to the intended page, and submit the group. Then copy the results into your campaign brief or publishing tool.', 'Because the output is presented as a clean list, it is easy to match each short URL with its original destination and share it with teammates.'] },
-      { heading: 'Keep links clear and accountable', paragraphs: ['Short URLs are most useful when the destination pages are already final and tested. Use descriptive notes in your own campaign records, keep a copy of the original URLs, and avoid shortening links that contain sensitive information unless you understand the destination’s privacy implications.', 'Eslotmain is designed to make everyday link sharing faster. For a small batch of links, the bulk shortener provides a practical alternative to handling every URL one at a time.'] },
-    ],
-  },
-]
+export type BlogSectionNode = { type: 'paragraph'; text: string } | { type: 'image'; src: string; alt: string }
+export type BlogSection = { heading: string; nodes: BlogSectionNode[] }
 
-export function getBlogPost(slug: string) {
-  return blogPosts.find((post) => post.slug === slug)
+export type BlogPost = BlogPostRecord & {
+  sections: BlogSection[]
+}
+
+const IMAGE_LINE = /^!\[([^\]]*)\]\((\S+)\)$/
+
+// Body format: blank line = paragraph break; a line starting with "## " begins a new section;
+// a line that is only "![alt text](https://image-url)" becomes a standalone image.
+// Inline "[link text](https://url)" inside a paragraph is turned into a link when the post is rendered.
+export function parseSections(content: string): BlogSection[] {
+  const sections: BlogSection[] = []
+  let current: BlogSection = { heading: '', nodes: [] }
+  let buffer: string[] = []
+
+  function flushParagraph() {
+    const text = buffer.join(' ').replace(/\s+/g, ' ').trim()
+    if (text) current.nodes.push({ type: 'paragraph', text })
+    buffer = []
+  }
+
+  for (const rawLine of content.split(/\r?\n/)) {
+    const line = rawLine.trimEnd()
+    const imageMatch = line.trim().match(IMAGE_LINE)
+    if (line.startsWith('## ')) {
+      flushParagraph()
+      if (current.heading || current.nodes.length) sections.push(current)
+      current = { heading: line.slice(3).trim(), nodes: [] }
+    } else if (imageMatch) {
+      flushParagraph()
+      current.nodes.push({ type: 'image', alt: imageMatch[1].trim(), src: imageMatch[2].trim() })
+    } else if (line.trim() === '') {
+      flushParagraph()
+    } else {
+      buffer.push(line.trim())
+    }
+  }
+  flushParagraph()
+  if (current.heading || current.nodes.length) sections.push(current)
+  return sections
+}
+
+export function computeReadTime(content: string) {
+  const words = content.trim().split(/\s+/).filter(Boolean).length
+  const minutes = Math.max(1, Math.round(words / 200))
+  return `${minutes} min read`
+}
+
+export function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80) || 'post'
+}
+
+async function uniqueSlug(base: string, excludeSlug?: string) {
+  let candidate = slugify(base)
+  let attempt = 1
+  // Keep trying candidate-2, candidate-3, ... until one is free (or belongs to the post being edited).
+  while (true) {
+    if (candidate === excludeSlug) return candidate
+    const [existing] = await db.select({ slug: blogPosts.slug }).from(blogPosts).where(eq(blogPosts.slug, candidate)).limit(1)
+    if (!existing) return candidate
+    attempt += 1
+    candidate = `${slugify(base)}-${attempt}`
+  }
+}
+
+function toRow(record: typeof blogPosts.$inferSelect): BlogPostRecord {
+  return {
+    id: record.id,
+    slug: record.slug,
+    title: record.title,
+    description: record.description,
+    excerpt: record.excerpt,
+    content: record.content,
+    readTime: record.readTime,
+    published: record.published,
+    publishedAt: record.publishedAt.toISOString(),
+    updatedAt: record.updatedAt.toISOString(),
+  }
+}
+
+function withSections(record: BlogPostRecord): BlogPost {
+  return { ...record, sections: parseSections(record.content) }
+}
+
+/** Public listing: published posts only, newest first. Used by /blog. */
+export async function listPublishedPosts(): Promise<BlogPost[]> {
+  const rows = await db.select().from(blogPosts).where(eq(blogPosts.published, true)).orderBy(desc(blogPosts.publishedAt))
+  return rows.map(toRow).map(withSections)
+}
+
+/** Admin listing: every post including drafts, newest first. Used by the dashboard. */
+export async function listAllPosts(): Promise<BlogPostRecord[]> {
+  const rows = await db.select().from(blogPosts).orderBy(desc(blogPosts.updatedAt))
+  return rows.map(toRow)
+}
+
+/** Public lookup by slug: only returns the post if it is published. Used by /blog/[slug]. */
+export async function getPublishedPost(slug: string): Promise<BlogPost | null> {
+  const [row] = await db.select().from(blogPosts).where(and(eq(blogPosts.slug, slug), eq(blogPosts.published, true))).limit(1)
+  return row ? withSections(toRow(row)) : null
+}
+
+/** Admin lookup by slug: returns drafts too. Used by the dashboard's edit form. */
+export async function getPostBySlugForAdmin(slug: string): Promise<BlogPostRecord | null> {
+  const [row] = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug)).limit(1)
+  return row ? toRow(row) : null
+}
+
+export type BlogPostInput = {
+  title: string
+  slug?: string
+  description: string
+  excerpt: string
+  content: string
+  published: boolean
+}
+
+export async function createPost(input: BlogPostInput, authorId?: string): Promise<BlogPostRecord> {
+  const slug = await uniqueSlug(input.slug || input.title)
+  const [row] = await db.insert(blogPosts).values({
+    slug,
+    title: input.title.trim(),
+    description: input.description.trim(),
+    excerpt: input.excerpt.trim(),
+    content: input.content,
+    readTime: computeReadTime(input.content),
+    published: input.published,
+    authorId: authorId ?? null,
+  }).returning()
+  return toRow(row)
+}
+
+export async function updatePost(currentSlug: string, input: BlogPostInput): Promise<BlogPostRecord | null> {
+  const desiredSlug = input.slug || input.title
+  const slug = await uniqueSlug(desiredSlug, currentSlug)
+  const [row] = await db.update(blogPosts).set({
+    slug,
+    title: input.title.trim(),
+    description: input.description.trim(),
+    excerpt: input.excerpt.trim(),
+    content: input.content,
+    readTime: computeReadTime(input.content),
+    published: input.published,
+    updatedAt: new Date(),
+  }).where(eq(blogPosts.slug, currentSlug)).returning()
+  return row ? toRow(row) : null
+}
+
+export async function deletePost(slug: string): Promise<boolean> {
+  const deleted = await db.delete(blogPosts).where(eq(blogPosts.slug, slug)).returning({ slug: blogPosts.slug })
+  return deleted.length > 0
 }
