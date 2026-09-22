@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Footer from '@/components/Footer'
-import { blogPosts } from '@/lib/blog'
+import { getPublishedBlogPosts } from '@/lib/blog'
 import SiteHeader from '@/components/SiteHeader'
 
 export const metadata: Metadata = {
@@ -10,7 +10,8 @@ export const metadata: Metadata = {
   alternates: { canonical: '/blog' },
 }
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const blogPosts = await getPublishedBlogPosts()
   return (
     <main className="site-shell inner-page-shell">
       <SiteHeader />

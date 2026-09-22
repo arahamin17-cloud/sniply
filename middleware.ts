@@ -1,22 +1,11 @@
-import { NextResponse, type NextRequest } from 'next/server'
-import { getSessionCookie } from 'better-auth/cookies'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-// Optimistic gate only: it checks that a Better Auth session cookie exists.
-// Pages and API routes still validate the session on the server (auth.api.getSession),
-// so a forged or stale cookie never gets anyone real access.
-export function middleware(request: NextRequest) {
-  if (!getSessionCookie(request)) {
-    const url = request.nextUrl.clone()
-    const error = request.nextUrl.searchParams.get('error')
-    url.pathname = '/signin'
-    url.search = ''
-    if (error) url.searchParams.set('error', error)
-    return NextResponse.redirect(url)
-  }
-  return NextResponse.next()
-}
+const isProtectedRoute = createRouteMatcher(['/account(.*)', '/analytics(.*)', '/admin(.*)', '/api/admin(.*)'])
 
-// Deliberately NOT applied to /signin or /signup, otherwise a stale cookie could cause a redirect loop.
+export default clerkMiddleware(async (auth, request) => {
+  if (isProtectedRoute(request)) await auth.protect()
+})
+
 export const config = {
-  matcher: ['/account/:path*', '/analytics/:path*'],
+  matcher: ['/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|map|txt|xml|pdf|zip)).*)', '/(api|trpc)(.*)'],
 }
