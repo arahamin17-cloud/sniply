@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Footer from '@/components/Footer'
 import { SharePost } from '@/components/BlogComponents'
+import RichText from '@/components/RichText'
 import { getPublishedPost } from '@/lib/blog'
 import SiteHeader from '@/components/SiteHeader'
 
@@ -34,7 +35,17 @@ export default async function BlogPostPage({ params }: Props) {
           {article.sections.map((section, index) => (
             <section key={`${section.heading}-${index}`}>
               {section.heading && <h2>{section.heading}</h2>}
-              {section.paragraphs.map((paragraph, pIndex) => <p key={pIndex}>{paragraph}</p>)}
+              {section.nodes.map((node, nodeIndex) =>
+                node.type === 'image' ? (
+                  <figure className="article-image-figure" key={nodeIndex}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="article-image" src={node.src} alt={node.alt} loading="lazy" />
+                    {node.alt && <figcaption>{node.alt}</figcaption>}
+                  </figure>
+                ) : (
+                  <p key={nodeIndex}><RichText text={node.text} /></p>
+                )
+              )}
             </section>
           ))}
         </div>

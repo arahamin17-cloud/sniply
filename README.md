@@ -48,7 +48,7 @@ RESEND_EMAIL_DOMAIN=eslotmain.xyz
 
 Posts live in a `blog_posts` table that isn't created by anything else in this repo (there's no migration tool wired up) — run **`blog-posts-setup.sql`** once against your Neon database before using the dashboard. It also has an optional block to restore the one article that used to be hardcoded in `lib/blog.ts`.
 
-Write the post body as plain text: a blank line starts a new paragraph, and a line starting with `## ` starts a new section with that heading. Read time and the URL slug (from the title, if you leave the slug field blank) are generated automatically.
+Write the post body as plain text: a blank line starts a new paragraph, and a line starting with `## ` starts a new section with that heading. For a clickable link, write `[link text](https://example.com)` inside a paragraph — either type it directly or select text in the editor and click "Add link". For an image, click "Add image" (or put `![description](https://example.com/image.jpg)` on its own line) — this only accepts an image URL, there's no file upload yet, so host the image somewhere (e.g. imgur, your own storage) first and paste its URL. Read time and the URL slug (from the title, if you leave the slug field blank) are generated automatically.
 
 ## Learn More
 

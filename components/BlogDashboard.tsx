@@ -1,7 +1,7 @@
 'use client'
 
-import { FormEvent, useState } from 'react'
-import { PencilIcon, PlusIcon, TrashIcon } from '@primer/octicons-react'
+import { FormEvent, useRef, useState } from 'react'
+import { ImageIcon, LinkIcon, PencilIcon, PlusIcon, TrashIcon } from '@primer/octicons-react'
 
 type Post = {
   id: string
@@ -27,7 +27,8 @@ export default function BlogDashboard({ initialPosts }: { initialPosts: Post[] }
   const [deleting, setDeleting] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
- 
+  const contentRef = useRef<HTMLTextAreaElement>(null)
+
   function startCreate() {
     setEditingSlug(null)
     setForm(emptyForm)
@@ -55,6 +56,47 @@ export default function BlogDashboard({ initialPosts }: { initialPosts: Post[] }
     setShowForm(false)
     setEditingSlug(null)
     setForm(emptyForm)
+  }
+
+  function insertIntoContent(before: string, after: string, placeholder: string) {
+    const textarea = contentRef.current
+    if (!textarea) return
+    const { selectionStart, selectionEnd, value } = textarea
+    const selected = value.slice(selectionStart, selectionEnd) || placeholder
+    const insertion = `${before}${selected}${after}`
+    const nextValue = value.slice(0, selectionStart) + insertion + value.slice(selectionEnd)
+    setForm((f) => ({ ...f, content: nextValue }))
+    // Put the cursor right after the inserted text once React re-renders the textarea.
+    const cursor = selectionStart + insertion.length
+    requestAnimationFrame(() => {
+      textarea.focus()
+      textarea.setSelectionRange(cursor, cursor)
+    })
+  }
+
+  function addLink() {
+    const url = window.prompt('Link URL (https://...)')
+    if (!url) return
+    insertIntoContent('[', `](${url})`, 'link text')
+  }
+
+  function addImage() {
+    const url = window.prompt('Image URL (https://...)')
+    if (!url) return
+    const alt = window.prompt('Image description (for accessibility)', '') ?? ''
+    const textarea = contentRef.current
+    const pos = textarea ? textarea.selectionStart : form.content.length
+    const before = form.content.slice(0, pos)
+    const after = form.content.slice(pos)
+    const needsLeadingBreak = before.length > 0 && !before.endsWith('\n\n')
+    const needsTrailingBreak = after.length > 0 && !after.startsWith('\n\n')
+    const snippet = `${needsLeadingBreak ? '\n\n' : ''}![${alt}](${url})${needsTrailingBreak ? '\n\n' : ''}`
+    setForm((f) => ({ ...f, content: before + snippet + after }))
+    const cursor = before.length + snippet.length
+    requestAnimationFrame(() => {
+      textarea?.focus()
+      textarea?.setSelectionRange(cursor, cursor)
+    })
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -131,7 +173,11 @@ export default function BlogDashboard({ initialPosts }: { initialPosts: Post[] }
           <label>Meta description *<input type="text" value={form.description} onChange={(event) => setForm((f) => ({ ...f, description: event.target.value }))} placeholder="Shown in search results and social previews" required /></label>
           <label>Excerpt *<textarea rows={2} value={form.excerpt} onChange={(event) => setForm((f) => ({ ...f, excerpt: event.target.value }))} placeholder="A short teaser shown on the blog list page" required /></label>
           <label>Content *
-            <textarea rows={14} value={form.content} onChange={(event) => setForm((f) => ({ ...f, content: event.target.value }))} placeholder={'Write the article body here.\n\nBlank lines start a new paragraph.\n\n## A heading\n\nText under a "## " line becomes its own section.'} required />
+            <div className="dashboard-toolbar">
+              <button type="button" className="outline-button dashboard-tool" onClick={addLink}><LinkIcon size={13} /> Add link</button>
+              <button type="button" className="outline-button dashboard-tool" onClick={addImage}><ImageIcon size={13} /> Add image</button>
+            </div>
+            <textarea ref={contentRef} rows={14} value={form.content} onChange={(event) => setForm((f) => ({ ...f, content: event.target.value }))} placeholder={'Write the article body here.\n\nBlank lines start a new paragraph.\n\n## A heading\n\nSelect text and click "Add link", or click "Add image" to insert one by URL.'} required />
           </label>
           <label className="checkbox-row"><input type="checkbox" checked={form.published} onChange={(event) => setForm((f) => ({ ...f, published: event.target.checked }))} /> Published (unpublished posts are saved as drafts and hidden from /blog)</label>
           {error && <p className="form-error" role="alert">{error}</p>}

@@ -15,29 +15,39 @@ export type BlogPostRecord = {
   updatedAt: string
 }
 
+export type BlogSectionNode = { type: 'paragraph'; text: string } | { type: 'image'; src: string; alt: string }
+export type BlogSection = { heading: string; nodes: BlogSectionNode[] }
+
 export type BlogPost = BlogPostRecord & {
-  sections: { heading: string; paragraphs: string[] }[]
+  sections: BlogSection[]
 }
 
-// Body format: blank line = paragraph break; a line starting with "## " begins a new section.
-// Text before the first "## " has no heading and is just rendered as paragraphs.
-export function parseSections(content: string) {
-  const sections: { heading: string; paragraphs: string[] }[] = []
-  let current = { heading: '', paragraphs: [] as string[] }
+const IMAGE_LINE = /^!\[([^\]]*)\]\((\S+)\)$/
+
+// Body format: blank line = paragraph break; a line starting with "## " begins a new section;
+// a line that is only "![alt text](https://image-url)" becomes a standalone image.
+// Inline "[link text](https://url)" inside a paragraph is turned into a link when the post is rendered.
+export function parseSections(content: string): BlogSection[] {
+  const sections: BlogSection[] = []
+  let current: BlogSection = { heading: '', nodes: [] }
   let buffer: string[] = []
 
   function flushParagraph() {
     const text = buffer.join(' ').replace(/\s+/g, ' ').trim()
-    if (text) current.paragraphs.push(text)
+    if (text) current.nodes.push({ type: 'paragraph', text })
     buffer = []
   }
 
   for (const rawLine of content.split(/\r?\n/)) {
     const line = rawLine.trimEnd()
+    const imageMatch = line.trim().match(IMAGE_LINE)
     if (line.startsWith('## ')) {
       flushParagraph()
-      if (current.heading || current.paragraphs.length) sections.push(current)
-      current = { heading: line.slice(3).trim(), paragraphs: [] }
+      if (current.heading || current.nodes.length) sections.push(current)
+      current = { heading: line.slice(3).trim(), nodes: [] }
+    } else if (imageMatch) {
+      flushParagraph()
+      current.nodes.push({ type: 'image', alt: imageMatch[1].trim(), src: imageMatch[2].trim() })
     } else if (line.trim() === '') {
       flushParagraph()
     } else {
@@ -45,7 +55,7 @@ export function parseSections(content: string) {
     }
   }
   flushParagraph()
-  if (current.heading || current.paragraphs.length) sections.push(current)
+  if (current.heading || current.nodes.length) sections.push(current)
   return sections
 }
 
