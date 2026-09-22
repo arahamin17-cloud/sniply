@@ -61,3 +61,18 @@ export const shortLinkEvents = pgTable('short_link_events', {
   code: text('code').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })
+
+export const blogPosts = pgTable('blog_posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: text('slug').notNull().unique(),
+  title: text('title').notNull(),
+  description: text('description').notNull(),
+  excerpt: text('excerpt').notNull(),
+  // Raw body: blank line = paragraph break, a line starting with "## " starts a new section.
+  content: text('content').notNull(),
+  readTime: text('read_time').notNull(),
+  published: boolean('published').notNull().default(true),
+  authorId: uuid('author_id'),
+  publishedAt: timestamp('published_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})

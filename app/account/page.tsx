@@ -5,6 +5,7 @@ import SiteHeader from '@/components/SiteHeader'
 import Footer from '@/components/Footer'
 import SignOutButton from '@/components/SignOutButton'
 import { auth } from '@/lib/auth'
+import { isAdminEmail } from '@/lib/admin'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,6 +41,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
             <div className="account-actions">
               <Link className="primary-button auth-submit" href="/analytics">View link analytics</Link>
               <Link className="outline-button outline-link" href="/">Shorten a link</Link>
+              {isAdminEmail(user.email) && <Link className="outline-button outline-link" href="/blog/dashboard">Manage blog posts</Link>}
               <SignOutButton />
             </div>
           </div>

@@ -18,5 +18,5 @@ export function middleware(request: NextRequest) {
 
 // Deliberately NOT applied to /signin or /signup, otherwise a stale cookie could cause a redirect loop.
 export const config = {
-  matcher: ['/account/:path*', '/analytics/:path*'],
+  matcher: ['/account/:path*', '/analytics/:path*', '/blog/dashboard/:path*'],
 }

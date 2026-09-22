@@ -42,6 +42,14 @@ RESEND_EMAIL_DOMAIN=eslotmain.xyz
 - **Email:** `RESEND_EMAIL_DOMAIN` must be a bare domain that is *verified in Resend* (Resend dashboard > Domains). Without it the app falls back to `onboarding@resend.dev`, which Resend only delivers to the email address of your own Resend account. Send failures are logged as `[auth] Resend rejected ...` in the Vercel runtime logs.
 - **Database:** the Neon database must contain the `neon_auth.user`, `neon_auth.session`, `neon_auth.account`, and `neon_auth.verification` tables used by the Drizzle adapter.
 
+## Blog dashboard
+
+`/blog/dashboard` is a create/edit/delete UI for blog posts, restricted to the emails listed in `ADMIN_EMAILS` (comma-separated, e.g. `ADMIN_EMAILS=you@eslotmain.xyz`). Anyone else who visits it is redirected to `/blog`; signed-out visitors are sent to `/signin` first. Sign in (or sign up) with one of those addresses to get a "Manage posts" link on `/blog` and `/account`.
+
+Posts live in a `blog_posts` table that isn't created by anything else in this repo (there's no migration tool wired up) — run **`blog-posts-setup.sql`** once against your Neon database before using the dashboard. It also has an optional block to restore the one article that used to be hardcoded in `lib/blog.ts`.
+
+Write the post body as plain text: a blank line starts a new paragraph, and a line starting with `## ` starts a new section with that heading. Read time and the URL slug (from the title, if you leave the slug field blank) are generated automatically.
+
 ## Learn More
 
 To learn more, take a look at the following resources:
